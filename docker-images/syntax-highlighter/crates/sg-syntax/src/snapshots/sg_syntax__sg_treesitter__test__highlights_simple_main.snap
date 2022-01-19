@@ -1,0 +1,23 @@
+---
+source: crates/sg-syntax/src/sg_treesitter.rs
+assertion_line: 390
+expression: "dump_document(document, src)"
+---
+  package main
+//^^^^^^^ Keyword
+//        ^^^^ ModuleIdentifier
+  import "fmt"
+//^^^^^^ Keyword
+//       ^^^^^ StringLiteral
+  
+  func main() {
+//^^^^ Keyword
+//     ^^^^ Identifier
+   fmt.Println("Hello, world", 5)
+// ^^^ Identifier
+//     ^^^^^^^ Identifier
+//             ^^^^^^^^^^^^^^ StringLiteral
+//                           ^ PunctuationDelimiter
+//                             ^ NumericLiteral
+  }
+

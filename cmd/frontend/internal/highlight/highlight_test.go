@@ -2,11 +2,24 @@ package highlight
 
 import (
 	"context"
+	"encoding/base64"
+	"fmt"
 	"html/template"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"google.golang.org/protobuf/proto"
+
+	"github.com/sourcegraph/sourcegraph/lib/codeintel/lsif_typed"
 )
+
+func TestDeserialize(t *testing.T) {
+	d := "EggIAAgACAQoBxIICAAIBQgGKAgSBggACAYIBxIGCAAIBwgIEgYIAAgJCAoSBggACAoICw=="
+	data, _ := base64.StdEncoding.DecodeString(d)
+	m := new(lsif_typed.Document)
+	proto.Unmarshal(data, m)
+	fmt.Println(m)
+}
 
 func TestGeneratePlainTable(t *testing.T) {
 	input := `line 1

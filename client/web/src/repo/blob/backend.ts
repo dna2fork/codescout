@@ -34,9 +34,10 @@ export const fetchBlob = memoizeObservable(
                 fragment BlobFileFields on File2 {
                     content
                     richHTML
-                    highlight(disableTimeout: $disableTimeout) {
+                    highlight(disableTimeout: $disableTimeout, treeSitterEnabled: true) {
                         aborted
                         html
+                        lsif
                     }
                 }
             `,

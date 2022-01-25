@@ -1,6 +1,8 @@
 import AlertCircleIcon from 'mdi-react/AlertCircleIcon'
 import React, { useCallback, useMemo, useState } from 'react'
-import { ButtonDropdown, DropdownMenu, DropdownToggle } from 'reactstrap'
+import { Button } from 'reactstrap'
+
+import { Popover, PopoverContent, PopoverTrigger } from '@sourcegraph/wildcard'
 
 import { StreamingProgressProps } from './StreamingProgress'
 import styles from './StreamingProgressSkippedButton.module.scss'
@@ -28,23 +30,24 @@ export const StreamingProgressSkippedButton: React.FunctionComponent<
     return (
         <>
             {progress.skipped.length > 0 && (
-                <ButtonDropdown isOpen={isOpen} toggle={toggleOpen}>
-                    <DropdownToggle
+                <Popover isOpen={isOpen} onOpenChange={toggleOpen}>
+                    <PopoverTrigger
                         className="mb-0 d-flex align-items-center text-decoration-none btn-sm"
-                        caret={true}
+                        // caret={true}
                         color={skippedWithWarningOrError ? 'outline-danger' : 'outline-secondary'}
                         data-testid="streaming-progress-skipped"
+                        as={Button}
                     >
                         {skippedWithWarningOrError ? <AlertCircleIcon className="mr-2 icon-inline" /> : null}
                         Some results excluded
-                    </DropdownToggle>
-                    <DropdownMenu className={styles.skippedPopover} data-testid="streaming-progress-skipped-popover">
+                    </PopoverTrigger>
+                    <PopoverContent className={styles.skippedPopover} data-testid="streaming-progress-skipped-popover">
                         <StreamingProgressSkippedPopover
                             progress={progress}
                             onSearchAgain={onSearchAgainWithPopupClose}
                         />
-                    </DropdownMenu>
-                </ButtonDropdown>
+                    </PopoverContent>
+                </Popover>
             )}
         </>
     )

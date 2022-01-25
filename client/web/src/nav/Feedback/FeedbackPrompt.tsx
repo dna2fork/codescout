@@ -2,12 +2,21 @@ import classNames from 'classnames'
 import CloseIcon from 'mdi-react/CloseIcon'
 import TickIcon from 'mdi-react/TickIcon'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { ButtonDropdown, DropdownMenu, DropdownToggle } from 'reactstrap'
 
 import { ErrorAlert } from '@sourcegraph/branded/src/components/alerts'
 import { Form } from '@sourcegraph/branded/src/components/Form'
 import { gql, useMutation } from '@sourcegraph/http-client'
-import { Button, FlexTextArea, LoadingSpinner, useAutoFocus, useLocalStorage, Link } from '@sourcegraph/wildcard'
+import {
+    Button,
+    FlexTextArea,
+    LoadingSpinner,
+    useAutoFocus,
+    useLocalStorage,
+    Link,
+    PopoverTrigger,
+    Popover,
+    PopoverContent,
+} from '@sourcegraph/wildcard'
 
 import { SubmitHappinessFeedbackResult, SubmitHappinessFeedbackVariables } from '../../graphql-operations'
 import { useRoutesMatch } from '../../hooks'
@@ -181,24 +190,19 @@ export const FeedbackPrompt: React.FunctionComponent<Props> = ({ open, routes })
     const match = useRoutesMatch(routes)
 
     return (
-        <ButtonDropdown
-            a11y={false}
-            isOpen={isOpen}
-            toggle={handleToggle}
-            className={styles.feedbackPrompt}
-            group={false}
-        >
-            <DropdownToggle
-                tag="button"
-                caret={false}
+        <Popover isOpen={isOpen} onOpenChange={handleToggle}>
+            <PopoverTrigger
                 className={classNames('btn btn-sm btn-outline-secondary text-decoration-none', styles.toggle)}
                 aria-label="Feedback"
             >
                 <span>Feedback</span>
-            </DropdownToggle>
-            <DropdownMenu right={true} className={styles.menu}>
+            </PopoverTrigger>
+            <PopoverContent
+                // right={true}
+                className={styles.menu}
+            >
                 <FeedbackPromptContent productResearchEnabled={true} closePrompt={forceClose} routeMatch={match} />
-            </DropdownMenu>
-        </ButtonDropdown>
+            </PopoverContent>
+        </Popover>
     )
 }

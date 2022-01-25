@@ -7,7 +7,6 @@ import CloudOffOutlineIcon from 'mdi-react/CloudOffOutlineIcon'
 import InformationCircleIcon from 'mdi-react/InformationCircleIcon'
 import SyncIcon from 'mdi-react/SyncIcon'
 import React from 'react'
-import { ButtonDropdown, DropdownMenu, DropdownToggle } from 'reactstrap'
 import { Observable, Subscription, of } from 'rxjs'
 import { catchError, map, repeatWhen, delay, distinctUntilChanged, switchMap } from 'rxjs/operators'
 
@@ -19,7 +18,7 @@ import {
     CloudSyncIconRefresh,
     CloudCheckIconRefresh,
 } from '@sourcegraph/shared/src/components/icons'
-import { Link } from '@sourcegraph/wildcard'
+import { Button, Link, Popover, PopoverContent, PopoverTrigger } from '@sourcegraph/wildcard'
 
 import { repeatUntil } from '../../../shared/src/util/rxjs/repeatUntil'
 import { requestGraphQL } from '../backend/graphql'
@@ -476,16 +475,24 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
         }
 
         return (
-            <ButtonDropdown
+            <Popover
                 isOpen={this.state.isOpen}
-                toggle={this.toggleIsOpen}
-                className="nav-link py-0 px-0 percy-hide chromatic-ignore"
+                onOpenChange={this.toggleIsOpen}
+                // className="nav-link py-0 px-0 percy-hide chromatic-ignore"
             >
-                <DropdownToggle caret={false} className="btn btn-link" nav={true}>
+                <PopoverTrigger
+                    className="nav-link py-0 px-0 percy-hide chromatic-ignore"
+                    as={Button}
+                    variant="link"
+                    // nav={true}
+                >
                     {this.renderIcon()}
-                </DropdownToggle>
+                </PopoverTrigger>
 
-                <DropdownMenu right={true} className={classNames('p-0', styles.dropdownMenu)}>
+                <PopoverContent
+                    // right={true}
+                    className={classNames('p-0', styles.dropdownMenu)}
+                >
                     <div className={styles.dropdownMenuContent}>
                         <small className={classNames('d-inline-block text-muted', styles.sync)}>Code sync status</small>
                         {isErrorLike(this.state.messagesOrError) ? (
@@ -498,8 +505,8 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
                             this.renderMessage(this.state.messagesOrError, this.props.user.isSiteAdmin)
                         )}
                     </div>
-                </DropdownMenu>
-            </ButtonDropdown>
+                </PopoverContent>
+            </Popover>
         )
     }
 }

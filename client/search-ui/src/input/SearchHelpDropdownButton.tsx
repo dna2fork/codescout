@@ -5,7 +5,7 @@ import React, { useCallback, useState } from 'react'
 import { DropdownItem } from 'reactstrap'
 
 import { TelemetryProps } from '@sourcegraph/shared/src/telemetry/telemetryService'
-import { PopoverTrigger, PopoverContent, Popover, Button, Alert } from '@sourcegraph/wildcard'
+import { PopoverTrigger, PopoverContent, Popover, Button, Alert, Position } from '@sourcegraph/wildcard'
 
 import styles from './SearchHelpDropdownButton.module.scss'
 
@@ -45,10 +45,7 @@ export const SearchHelpDropdownButton: React.FunctionComponent<SearchHelpDropdow
                     aria-hidden="true"
                 />
             </PopoverTrigger>
-            <PopoverContent
-                // right={true}
-                className="pb-0"
-            >
+            <PopoverContent position={Position.bottomEnd} className="pb-0">
                 <DropdownItem header={true}>
                     <strong>Search reference</strong>
                 </DropdownItem>

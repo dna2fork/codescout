@@ -2,3 +2,9 @@
     width: 20rem;
     padding: 0;
 }
+.skipped-btn {
+    :global(.caret) {
+        font-size: 14px;
+        fill: inherit !important;
+    }
+}

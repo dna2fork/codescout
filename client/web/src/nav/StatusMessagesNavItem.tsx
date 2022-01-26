@@ -18,7 +18,7 @@ import {
     CloudSyncIconRefresh,
     CloudCheckIconRefresh,
 } from '@sourcegraph/shared/src/components/icons'
-import { Button, Link, Popover, PopoverContent, PopoverTrigger } from '@sourcegraph/wildcard'
+import { Button, Link, Popover, PopoverContent, PopoverTrigger, Position } from '@sourcegraph/wildcard'
 
 import { repeatUntil } from '../../../shared/src/util/rxjs/repeatUntil'
 import { requestGraphQL } from '../backend/graphql'
@@ -475,24 +475,12 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
         }
 
         return (
-            <Popover
-                isOpen={this.state.isOpen}
-                onOpenChange={this.toggleIsOpen}
-                // className="nav-link py-0 px-0 percy-hide chromatic-ignore"
-            >
-                <PopoverTrigger
-                    className="nav-link py-0 px-0 percy-hide chromatic-ignore"
-                    as={Button}
-                    variant="link"
-                    // nav={true}
-                >
+            <Popover isOpen={this.state.isOpen} onOpenChange={this.toggleIsOpen}>
+                <PopoverTrigger className="nav-link py-0 px-0 percy-hide chromatic-ignore" as={Button} variant="link">
                     {this.renderIcon()}
                 </PopoverTrigger>
 
-                <PopoverContent
-                    // right={true}
-                    className={classNames('p-0', styles.dropdownMenu)}
-                >
+                <PopoverContent position={Position.bottomEnd} className={classNames('p-0', styles.dropdownMenu)}>
                     <div className={styles.dropdownMenuContent}>
                         <small className={classNames('d-inline-block text-muted', styles.sync)}>Code sync status</small>
                         {isErrorLike(this.state.messagesOrError) ? (

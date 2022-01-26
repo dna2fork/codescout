@@ -16,6 +16,7 @@ import {
     PopoverTrigger,
     Popover,
     PopoverContent,
+    Position,
 } from '@sourcegraph/wildcard'
 
 import { SubmitHappinessFeedbackResult, SubmitHappinessFeedbackVariables } from '../../graphql-operations'
@@ -197,10 +198,7 @@ export const FeedbackPrompt: React.FunctionComponent<Props> = ({ open, routes })
             >
                 <span>Feedback</span>
             </PopoverTrigger>
-            <PopoverContent
-                // right={true}
-                className={styles.menu}
-            >
+            <PopoverContent position={Position.bottomEnd} className={styles.menu}>
                 <FeedbackPromptContent productResearchEnabled={true} closePrompt={forceClose} routeMatch={match} />
             </PopoverContent>
         </Popover>

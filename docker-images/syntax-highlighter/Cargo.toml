@@ -17,6 +17,7 @@ sg-syntax = { path = "./crates/sg-syntax" }
 
 [workspace]
 members = [
+    "crates/sg-lsif",
     "crates/sg-macros",
     "crates/sg-syntax",
 ]

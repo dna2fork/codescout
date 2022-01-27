@@ -17,8 +17,6 @@ pub use sg_treesitter::PackedRange as LsifPackedRange;
 mod sg_syntect;
 use sg_syntect::ClassedTableGenerator;
 
-pub mod lsif;
-
 thread_local! {
     pub(crate) static SYNTAX_SET: SyntaxSet = SyntaxSet::load_defaults_newlines();
 }

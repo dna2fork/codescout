@@ -13,4 +13,4 @@ plugins:
     out: ./doc/code_intelligence/references
     opt: doc/code_intelligence/references/lsif.sprig,lsif.md
   - name: rust
-    out: ./docker-images/syntax-highlighter/src
+    out: ./docker-images/syntax-highlighter/crates/sg-lsif/src/

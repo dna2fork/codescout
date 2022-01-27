@@ -1144,6 +1144,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "sg-lsif"
+version = "0.1.0"
+dependencies = [
+ "protobuf",
+]
+
+[[package]]
 name = "sg-macros"
 version = "0.1.0"
 dependencies = [
@@ -1167,6 +1174,7 @@ dependencies = [
  "rocket",
  "serde",
  "serde_json",
+ "sg-lsif",
  "sg-macros",
  "syntect",
  "tree-sitter",

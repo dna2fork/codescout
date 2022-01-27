@@ -3,9 +3,8 @@ import AlertCircleIcon from 'mdi-react/AlertCircleIcon'
 import MenuDownIcon from 'mdi-react/MenuDownIcon'
 import MenuUpIcon from 'mdi-react/MenuUpIcon'
 import React, { useCallback, useMemo, useState } from 'react'
-import { Button } from 'reactstrap'
 
-import { Popover, PopoverContent, PopoverTrigger, Position } from '@sourcegraph/wildcard'
+import { Button, Popover, PopoverContent, PopoverTrigger, Position } from '@sourcegraph/wildcard'
 
 import { StreamingProgressProps } from './StreamingProgress'
 import styles from './StreamingProgressSkippedButton.module.scss'
@@ -35,13 +34,13 @@ export const StreamingProgressSkippedButton: React.FunctionComponent<
             {progress.skipped.length > 0 && (
                 <Popover isOpen={isOpen} onOpenChange={toggleOpen}>
                     <PopoverTrigger
-                        className={classNames(
-                            'mb-0 d-flex align-items-center text-decoration-none btn-sm',
-                            styles.skippedBtn
-                        )}
-                        color={skippedWithWarningOrError ? 'outline-danger' : 'outline-secondary'}
+                        className={classNames('mb-0 d-flex align-items-center text-decoration-none', styles.skippedBtn)}
+                        size="sm"
+                        variant={skippedWithWarningOrError ? 'danger' : 'secondary'}
+                        outline={true}
                         data-testid="streaming-progress-skipped"
                         as={Button}
+                        aria-expanded={isOpen}
                     >
                         {skippedWithWarningOrError ? <AlertCircleIcon className="mr-2 icon-inline" /> : null}
                         Some results excluded

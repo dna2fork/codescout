@@ -15,7 +15,11 @@ import styles from './Popover.story.module.scss'
 
 const config: Meta = {
     title: 'wildcard/Popover',
+    component: Popover,
     decorators: [story => <BrandedStory styles={webStyles}>{() => story()}</BrandedStory>],
+    parameters: {
+        chromatic: { disableSnapshot: false },
+    },
 }
 
 export default config

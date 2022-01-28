@@ -14,7 +14,11 @@ const decorator: DecoratorFn = story => (
 
 const config: Meta = {
     title: 'wildcard/Container',
+    component: Container,
     decorators: [decorator],
+    parameters: {
+        chromatic: { disableSnapshot: false },
+    },
 }
 
 export default config

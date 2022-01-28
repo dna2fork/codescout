@@ -9,7 +9,8 @@ import { panels } from '@sourcegraph/branded/src/components/panel/Panel.fixtures
 import { EmptyPanelView } from '@sourcegraph/branded/src/components/panel/views/EmptyPanelView'
 import webStyles from '@sourcegraph/web/src/SourcegraphWebApp.scss'
 
-import { Button, Grid } from '..'
+import { Button } from '../Button'
+import { Grid } from '../Grid'
 import { Tabs, Tab, TabList, TabPanel, TabPanels } from '../Tabs'
 
 import { PANEL_POSITIONS } from './constants'
@@ -19,12 +20,12 @@ const decorator: DecoratorFn = story => <BrandedStory styles={webStyles}>{() => 
 
 const config: Meta = {
     title: 'wildcard/Panel',
+    component: Panel,
 
     decorators: [decorator],
 
     parameters: {
         chromatic: { disableSnapshot: false },
-        component: Panel,
         design: {
             type: 'figma',
             name: 'Figma',

@@ -109,7 +109,6 @@ $spacer: 1rem;
 
 // Modified in `./forms.scss`
 @import 'bootstrap/scss/forms';
-@import 'bootstrap/scss/custom-forms';
 @import 'bootstrap/scss/input-group';
 
 // Global styles provided by @reach packages. Should be imported once in the global scope.
@@ -132,6 +131,7 @@ $spacer: 1rem;
 @import './highlight';
 @import './tabs';
 @import './progress';
+@import './custom-forms';
 
 * {
     box-sizing: border-box;

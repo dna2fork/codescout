@@ -13,6 +13,7 @@ import { ButtonVariants } from './ButtonVariants'
 
 const config: Meta = {
     title: 'wildcard/Button',
+    component: Button,
 
     decorators: [
         story => (
@@ -21,8 +22,6 @@ const config: Meta = {
     ],
 
     parameters: {
-        chromatic: { disableSnapshot: false },
-        component: Button,
         design: {
             type: 'figma',
             name: 'Figma',
@@ -75,3 +74,7 @@ export const AllButtons: Story = () => (
         <ButtonVariants variants={['link']} />
     </>
 )
+
+AllButtons.parameters = {
+    chromatic: { disableSnapshot: false },
+}

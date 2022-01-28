@@ -18,6 +18,7 @@ const decorator: DecoratorFn = story => (
 
 const config: Meta = {
     title: 'wildcard/PageHeader',
+    component: PageHeader,
     decorators: [decorator],
 }
 
@@ -71,6 +72,7 @@ export const ComplexHeader: Story = () => (
 ComplexHeader.storyName = 'Complex header'
 
 ComplexHeader.parameters = {
+    chromatic: { disableSnapshot: false },
     design: {
         type: 'figma',
         name: 'Figma',

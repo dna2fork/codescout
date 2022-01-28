@@ -21,6 +21,7 @@ const config: Meta = {
     ],
 
     parameters: {
+        chromatic: { disableSnapshot: false },
         component: Button,
         design: {
             type: 'figma',

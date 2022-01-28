@@ -16,6 +16,7 @@ const Story: Meta = {
     ],
 
     parameters: {
+        chromatic: { disableSnapshot: false },
         component: Input,
         design: {
             type: 'figma',

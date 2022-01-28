@@ -16,6 +16,7 @@ const config: Meta = {
     decorators: [decorator],
 
     parameters: {
+        chromatic: { disableSnapshot: false },
         component: AnchorLink,
         design: {
             type: 'figma',

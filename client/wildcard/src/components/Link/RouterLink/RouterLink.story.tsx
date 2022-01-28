@@ -16,6 +16,7 @@ const config: Meta = {
     decorators: [decorator],
 
     parameters: {
+        chromatic: { disableSnapshot: false },
         component: RouterLink,
         design: {
             type: 'figma',

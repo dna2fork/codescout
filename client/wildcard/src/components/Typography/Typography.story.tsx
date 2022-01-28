@@ -19,6 +19,7 @@ const config: Meta = {
     decorators: [decorator],
 
     parameters: {
+        chromatic: { disableSnapshot: false },
         component: Label,
         design: {
             type: 'figma',

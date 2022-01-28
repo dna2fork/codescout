@@ -23,6 +23,7 @@ const config: Meta = {
     decorators: [decorator],
 
     parameters: {
+        chromatic: { disableSnapshot: false },
         component: Panel,
         design: {
             type: 'figma',

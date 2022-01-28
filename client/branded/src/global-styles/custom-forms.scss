@@ -76,13 +76,13 @@
     }
 
     &:focus:not(:checked) ~ .custom-control-label::before {
-        border-color: lighten(var(--primary), 25%);
+        border-color: lighten(#0b70db, 25%);
     }
 
     &:not(:disabled):active ~ .custom-control-label::before {
         color: var(--white);
-        background-color: lighten(var(--primary), 35%);
-        border-color: lighten(var(--primary), 35%);
+        background-color: lighten(#0b70db, 35%);
+        border-color: lighten(#0b70db, 35%);
     }
 
     // Use [disabled] and :disabled to work around https://github.com/twbs/bootstrap/issues/28247
@@ -220,8 +220,8 @@
                 calc(var(--custom-control-indicator-border-width) * 2)
             );
             left: add(
-                -(var(--custom-switch-width) + var(--custom-control-gutter)),
-                var(--custom-control-indicator-border-width) * 2
+                calc(-1 * (var(--custom-switch-width) + var(--custom-control-gutter))),
+                calc(var(--custom-control-indicator-border-width) * 2)
             );
             width: var(--custom-switch-indicator-size);
             height: var(--custom-switch-indicator-size);

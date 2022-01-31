@@ -16,6 +16,24 @@
     );
     --custom-forms-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
         box-shadow 0.15s ease-in-out;
+    --custom-control-indicator-checked-disabled-bg: rgba(var(--primary), 0.5);
+    --line-height-base: 1.5;
+    --input-btn-padding-y: 0.375rem;
+    --input-btn-padding-x: 0.75rem;
+    --border-width: 0.0625rem;
+    --input-height-border: calc(0.0625rem * 2);
+    --custom-select-height: add(
+        var(--line-height-base) * 1em,
+        add(var(--input-btn-padding-y) * 2, var(--input-height-border) false)
+    );
+    --custom-select-padding-y: var(--input-btn-padding-y);
+    --custom-select-padding-x: var(--input-btn-padding-x);
+    --custom-select-font-size: 1rem;
+    --custom-select-color: var(--gray-07);
+    --custom-select-bg-size: 8px 10px;
+    --custom-select-indicator: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'><path fill='#{var(--gray-08)}' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    --custom-select-background: escape-svg(var(--custom-select-indicator)) no-repeat right
+        var(--custom-select-padding-x) center / var(--custom-select-bg-size);
 }
 
 @mixin transition($transition...) {
@@ -119,7 +137,6 @@
         content: '';
         background-color: var(--custom-control-indicator-bg);
         border: var(--custom-control-indicator-border-color) solid var(--custom-control-indicator-border-width);
-        //   @include box-shadow($custom-control-indicator-box-shadow);
     }
 
     // Foreground (icon)
@@ -155,8 +172,7 @@
     .custom-control-input:indeterminate ~ .custom-control-label {
         &::before {
             border-color: var(--primary);
-            // @include gradient-bg($custom-checkbox-indicator-indeterminate-bg);
-            // @include box-shadow($custom-checkbox-indicator-indeterminate-box-shadow);
+            background-color: var(--primary);
         }
         &::after {
             background-image: escape-svg(
@@ -167,10 +183,10 @@
 
     .custom-control-input:disabled {
         &:checked ~ .custom-control-label::before {
-            // @include gradient-bg($custom-control-indicator-checked-disabled-bg);
+            background-color: var(--custom-control-indicator-checked-disabled-bg);
         }
         &:indeterminate ~ .custom-control-label::before {
-            // @include gradient-bg($custom-control-indicator-checked-disabled-bg);
+            background-color: var(--custom-control-indicator-checked-disabled-bg);
         }
     }
 }
@@ -182,18 +198,20 @@
 .custom-radio {
     .custom-control-label::before {
         // stylelint-disable-next-line property-blacklist
-        border-radius: $custom-radio-indicator-border-radius;
+        border-radius: 50%;
     }
 
     .custom-control-input:checked ~ .custom-control-label {
         &::after {
-            background-image: escape-svg($custom-radio-indicator-icon-checked);
+            background-image: escape-svg(
+                url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='-4 -4 8 8'><circle r='3' fill='#{var(--white)}'/></svg>")
+            );
         }
     }
 
     .custom-control-input:disabled {
         &:checked ~ .custom-control-label::before {
-            @include gradient-bg($custom-control-indicator-checked-disabled-bg);
+            background-color: var(--custom-control-indicator-checked-disabled-bg);
         }
     }
 }
@@ -235,13 +253,13 @@
     .custom-control-input:checked ~ .custom-control-label {
         &::after {
             background-color: var(--custom-control-indicator-bg);
-            transform: translateX(var(--custom-switch-width) - $custom-control-indicator-size);
+            transform: translateX(var(--custom-switch-width) - var(--custom-control-indicator-size));
         }
     }
 
     .custom-control-input:disabled {
         &:checked ~ .custom-control-label::before {
-            @include gradient-bg($custom-control-indicator-checked-disabled-bg);
+            background-color: var(--custom-control-indicator-checked-disabled-bg);
         }
     }
 }
@@ -251,21 +269,21 @@
 // Replaces the browser default select with a custom one, mostly pulled from
 // https://primer.github.io/.
 //
-
+// add($input-line-height * 1em, add($input-padding-y * 2, $input-height-border, false))
 .custom-select {
     display: inline-block;
     width: 100%;
-    height: $custom-select-height;
-    padding: $custom-select-padding-y ($custom-select-padding-x + $custom-select-indicator-padding)
-        $custom-select-padding-y $custom-select-padding-x;
-    font-family: $custom-select-font-family;
-    @include font-size($custom-select-font-size);
-    font-weight: $custom-select-font-weight;
-    line-height: $custom-select-line-height;
-    color: $custom-select-color;
+    height: var(--custom-select-height);
+    padding: var(--custom-select-padding-y) calc(var(--custom-select-padding-x) + 1rem) var(--custom-select-padding-y)
+        var(--custom-select-padding-x);
+    font-size: var(--custom-select-font-size);
+    font-weight: 400;
+    line-height: var(--line-height-base);
+    color: var(--custom-select-color);
     vertical-align: middle;
-    background: $custom-select-bg $custom-select-background;
-    border: $custom-select-border-width solid $custom-select-border-color;
+    background: var(--white) var(--custom-select-background);
+    border: var(--border-width) solid var(--gray-03);
+    // Continue here
     @include border-radius($custom-select-border-radius, 0);
     @include box-shadow($custom-select-box-shadow);
     appearance: none;
@@ -311,7 +329,7 @@
     // Remove outline from select box in FF
     &:-moz-focusring {
         color: transparent;
-        text-shadow: 0 0 0 $custom-select-color;
+        text-shadow: 0 0 0 var(--custom-select-color);
     }
 }
 

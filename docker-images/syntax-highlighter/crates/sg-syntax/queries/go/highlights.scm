@@ -12,42 +12,34 @@
 
 ; Function calls
 
-(call_expression
- function: (identifier) @identifier)
+; (call_expression
+;  function: (selector_expression
+;    operand: (identifier)
+;    field: (field_identifier) @identifier.function)
+;  arguments: (_))
+;
+; (call_expression
+;  function: (identifier) @identifier)
 
 (call_expression
- function: (selector_expression
-   operand: (identifier)
-   field: (field_identifier) @identifier)
- arguments: (_))
+  function: (identifier) @identifer.function)
 
-;;
-; Identifiers
-
-(type_identifier) @type
-; (field_identifier) @property
-(identifier) @variable
-(package_identifier) @variable.module
-
-(parameter_declaration (identifier) @parameter)
-(variadic_parameter_declaration (identifier) @parameter)
-
-((identifier) @constant
-(#eq? @constant "_"))
-
-; ((identifier) @constant
-;  (#vim-match? @constant "^[A-Z][A-Z\\d_]+$"))
-
-(const_spec
- name: (identifier) @constant)
+(call_expression
+  function: (selector_expression
+    field: (field_identifier) @identifier.function))
 
 ; Function definitions
 
-; (function_declaration
-;  name: (identifier) @function)
-;
-; (method_declaration
-;  name: (field_identifier) @method)
+(function_declaration
+ name: (identifier) @function)
+
+(method_declaration
+ name: (field_identifier) @method)
+
+; Constants
+
+(const_spec
+ name: (identifier) @constant)
 
 ; Operators
 
@@ -114,7 +106,7 @@
 "func" @keyword.function
 "return" @keyword.return
 
-"for" @repeat
+"for" @keyword.repeat
 
 [
  "import"
@@ -206,7 +198,7 @@
 
 (true) @boolean
 (false) @boolean
-(nil) @constant.builtin
+(nil) @constant.null
 
 (comment) @comment
 
@@ -220,3 +212,21 @@
 
  (#match? @_id ".*Query$")
 )
+
+;;
+; Identifiers
+
+(type_identifier) @type
+; (field_identifier) @property
+(identifier) @variable
+(package_identifier) @variable.module
+
+(parameter_declaration (identifier) @parameter)
+(variadic_parameter_declaration (identifier) @parameter)
+
+((identifier) @constant
+(#eq? @constant "_"))
+
+; ((identifier) @constant
+;  (#vim-match? @constant "^[A-Z][A-Z\\d_]+$"))
+

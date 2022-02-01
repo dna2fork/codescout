@@ -22,7 +22,7 @@ anyhow = "1"
 libloading = "0.7"
 paste = "1.0.6"
 sg-macros = { path = "../sg-macros" }
-sg-lsif = { path = "../sg-lsif/" }
+sg-lsif = { path = "../sg-lsif" }
 
 [dev-dependencies]
 insta = "1.11.0"

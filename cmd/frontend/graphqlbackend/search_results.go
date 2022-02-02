@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"path"
 	"regexp"
 	"sort"
 	"strconv"
@@ -45,6 +44,7 @@ import (
 	"github.com/sourcegraph/sourcegraph/internal/search/run"
 	"github.com/sourcegraph/sourcegraph/internal/search/searchcontexts"
 	"github.com/sourcegraph/sourcegraph/internal/search/streaming"
+	"github.com/sourcegraph/sourcegraph/internal/search/subrepoperms"
 	"github.com/sourcegraph/sourcegraph/internal/search/symbol"
 	"github.com/sourcegraph/sourcegraph/internal/search/unindexed"
 	zoektutil "github.com/sourcegraph/sourcegraph/internal/search/zoekt"
@@ -942,7 +942,7 @@ func (r *searchResolver) toSearchJob(q query.Q) (run.Job, error) {
 		Options: repoOptions,
 	})
 
-	return run.NewLimitJob(
+	job := run.NewLimitJob(
 		maxResults,
 		run.NewTimeoutJob(
 			args.Timeout,
@@ -951,7 +951,14 @@ func (r *searchResolver) toSearchJob(q query.Q) (run.Job, error) {
 				run.NewParallelJob(optionalJobs...),
 			),
 		),
-	), nil
+	)
+
+	checker := authz.DefaultSubRepoPermsChecker
+	if authz.SubRepoEnabled(checker) {
+		job = subrepoperms.NewFilterJob(job)
+	}
+
+	return job, nil
 }
 
 // intersect returns the intersection of two sets of search result content
@@ -1453,7 +1460,7 @@ func (r *searchResolver) resultsRecursive(ctx context.Context, plan query.Plan) 
 
 	matches := dedup.Results()
 	if len(matches) > 0 {
-		sortResults(matches)
+		sort.Sort(matches)
 	}
 
 	var alert *search.Alert
@@ -1535,11 +1542,12 @@ func searchResultsToFileNodes(matches []result.Match) ([]query.Node, error) {
 // is exceeded, returns a search alert with a did-you-mean link for the same
 // query with a longer timeout.
 func (r *searchResolver) evaluateJob(ctx context.Context, job run.Job) (_ *SearchResults, err error) {
-	tr, ctx := trace.New(ctx, "evaluateRoutine", "")
+	tr, ctx := trace.New(ctx, "evaluateJob", "")
 	defer func() {
 		tr.SetError(err)
 		tr.Finish()
 	}()
+	tr.LazyPrintf("job name: %s", job.Name())
 
 	start := time.Now()
 	rr, err := doResults(ctx, r.SearchInputs, r.db, r.stream, job)
@@ -1838,7 +1846,7 @@ func doResults(ctx context.Context, searchInputs *run.SearchInputs, db database.
 	}
 	alert, err := ao.Done(&common)
 
-	sortResults(matches)
+	sort.Sort(matches)
 
 	return &SearchResults{
 		Matches: matches,
@@ -1868,75 +1876,6 @@ type SearchResultResolver interface {
 	ToCommitSearchResult() (*CommitSearchResultResolver, bool)
 
 	ResultCount() int32
-}
-
-// compareFileLengths sorts file paths such that they appear earlier if they
-// match file: patterns in the query exactly.
-func compareFileLengths(left, right string, exactFilePatterns map[string]struct{}) bool {
-	_, aMatch := exactFilePatterns[path.Base(left)]
-	_, bMatch := exactFilePatterns[path.Base(right)]
-	if aMatch || bMatch {
-		if aMatch && bMatch {
-			// Prefer shorter file names (ie root files come first)
-			if len(left) != len(right) {
-				return len(left) < len(right)
-			}
-			return left < right
-		}
-		// Prefer exact match
-		return aMatch
-	}
-	return left < right
-}
-
-func compareDates(left, right *time.Time) bool {
-	if left == nil || right == nil {
-		return left != nil // Place the value that is defined first.
-	}
-	return left.After(*right)
-}
-
-// compareSearchResults sorts repository matches, file matches, and commits.
-// Repositories and filenames are sorted alphabetically. As a refinement, if any
-// filename matches a value in a non-empty set exactFilePatterns, then such
-// filenames are listed earlier.
-//
-// Commits are sorted by date. Commits are not associated with searchrepos, and
-// will always list after repository or file match results, if any.
-func compareSearchResults(left, right result.Match, exactFilePatterns map[string]struct{}) bool {
-	sortKeys := func(match result.Match) (string, string, *time.Time) {
-		switch r := match.(type) {
-		case *result.RepoMatch:
-			return string(r.Name), "", nil
-		case *result.FileMatch:
-			return string(r.Repo.Name), r.Path, nil
-		case *result.CommitMatch:
-			// Commits are relatively sorted by date, and after repo
-			// or path names. We use ~ as the key for repo and
-			// paths,lexicographically last in ASCII.
-			return "~", "~", &r.Commit.Author.Date
-		}
-		// Unreachable.
-		panic("unreachable: compareSearchResults expects RepositoryResolver, FileMatchResolver, or CommitSearchResultResolver")
-	}
-
-	arepo, afile, adate := sortKeys(left)
-	brepo, bfile, bdate := sortKeys(right)
-
-	if arepo == brepo {
-		if len(exactFilePatterns) == 0 {
-			if afile != bfile {
-				return afile < bfile
-			}
-			return compareDates(adate, bdate)
-		}
-		return compareFileLengths(afile, bfile, exactFilePatterns)
-	}
-	return arepo < brepo
-}
-
-func sortResults(results []result.Match) {
-	sort.Slice(results, func(i, j int) bool { return compareSearchResults(results[i], results[j], nil) })
 }
 
 var metricFeatureFlagUnavailable = promauto.NewCounter(prometheus.CounterOpts{

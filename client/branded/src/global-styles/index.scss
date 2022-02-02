@@ -122,6 +122,7 @@ $spacer: 1rem;
 @import './popover';
 @import './nav';
 @import './list-group';
+@import './custom-forms';
 @import './typography';
 @import './tables';
 @import './code';
@@ -131,7 +132,6 @@ $spacer: 1rem;
 @import './highlight';
 @import './tabs';
 @import './progress';
-@import './custom-forms';
 
 * {
     box-sizing: border-box;

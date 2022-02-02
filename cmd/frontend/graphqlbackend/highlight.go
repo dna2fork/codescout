@@ -35,7 +35,7 @@ type HighlightArgs struct {
 	DisableTimeout     bool
 	IsLightTheme       *bool
 	HighlightLongLines bool
-	TreeSitterEnabled bool
+	TreeSitterEnabled  bool
 }
 
 type highlightedFileResolver struct {
@@ -65,15 +65,20 @@ func highlightContent(ctx context.Context, args *HighlightArgs, content, path st
 		HighlightLongLines: args.HighlightLongLines,
 		SimulateTimeout:    simulateTimeout,
 		Metadata:           metadata,
-		TreeSitterEnabled: args.TreeSitterEnabled,
+		TreeSitterEnabled:  args.TreeSitterEnabled,
 	})
 	result.html = html
 	result.aborted = aborted
-	marshaller := &jsonpb.Marshaler{
-		EnumsAsInts: true,
-		EmitDefaults: false,
+
+	if document != nil {
+		marshaller := &jsonpb.Marshaler{
+			EnumsAsInts:  true,
+			EmitDefaults: false,
+		}
+
+		result.lsif, err = marshaller.MarshalToString(document)
 	}
-	result.lsif, err = marshaller.MarshalToString(document)
+
 	if err != nil {
 		return nil, err
 	}

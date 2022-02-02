@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-enry/go-enry/v2"
 	"github.com/opentracing-contrib/go-stdlib/nethttp"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
@@ -25,6 +24,9 @@ type Query struct {
 	//
 	// See: https://github.com/sourcegraph/syntect_server#supported-file-extensions
 	Filepath string `json:"filepath"`
+
+	// Filetype is the language name.
+	Filetype string `json:"filetype"`
 
 	// Theme is the color theme to use for highlighting.
 	// If CSS is true, theme is ignored.
@@ -99,6 +101,10 @@ type response struct {
 	Code  string `json:"code"`
 }
 
+var supportedFiletypes = map[string]struct{}{
+	"go": {},
+}
+
 // Client represents a client connection to a syntect_server.
 type Client struct {
 	syntectServer string
@@ -106,20 +112,30 @@ type Client struct {
 
 var client = &http.Client{Transport: &nethttp.Transport{}}
 
+func (c *Client) IsTreesitterSupported(filetype string) bool {
+	_, contained := supportedFiletypes[strings.ToLower(filetype)]
+	return contained
+}
+
 // Highlight performs a query to highlight some code.
-func (c *Client) Highlight(ctx context.Context, q *Query, isTreeSitterEnabled bool) (*Response, error) {
-	filetype := enry.GetLanguage(q.Filepath, []byte(q.Code))
-	fmt.Println("ENRY: ", filetype)
+func (c *Client) Highlight(ctx context.Context, q *Query, useTreeSitter bool) (*Response, error) {
+	if useTreeSitter && !c.IsTreesitterSupported(q.Filetype) {
+		return nil, errors.New("Not a valid treesitter filetype")
+	}
 
 	// Build the request.
 	jsonQuery, err := json.Marshal(q)
 	if err != nil {
 		return nil, errors.Wrap(err, "encoding query")
 	}
-	url := "/"
-	if isTreeSitterEnabled {
+
+	var url string
+	if useTreeSitter {
 		url = "/lsif"
+	} else {
+		url = "/"
 	}
+
 	req, err := http.NewRequest("POST", c.url(url), bytes.NewReader(jsonQuery))
 	if err != nil {
 		return nil, errors.Wrap(err, "building request")

@@ -380,17 +380,166 @@ class Range {
     constructor(public readonly start: Position, public readonly end: Position) {}
 }
 
-const syntaxKinds = [
-    'string',
-    'integer',
-    'variable',
-    'variable',
-    'variable',
-    'variable',
-    'variable',
-    'variable',
-    'variable',
-]
+
+enum SyntaxKind {
+  UnspecifiedSyntaxKind = 0,
+
+  // Comment, including comment markers and text
+  Comment = 1,
+
+  // `,` `.` `,`
+  PunctuationDelimiter = 2,
+  // (), {}, [] when used syntactically
+  PunctuationBracket = 3,
+
+  // `if`, `else`, `return`, `class`, etc.
+  IdentifierKeyword = 4,
+
+  // `+`, `*`, etc.
+  IdentifierOperator = 5,
+
+  // non-specific catch-all for any identifier not better described elsewhere
+  Identifier = 6,
+  // Identifiers builtin to the language: `min`, `print` in Python.
+  IdentifierBuiltin = 7,
+  // Identifiers representing `null`-like values: `None` in Python, `nil` in Go.
+  IdentifierNull = 8,
+  // `xyz` in `const xyz = "hello"`
+  IdentifierConstant = 9,
+  // `var X = "hello"` in Go
+  IdentifierMutableGlobal = 10,
+  // both parameter definition and references
+  IdentifierParameter = 11,
+  // identifiers for variable definitions and references within a local scope
+  IdentifierLocal = 12,
+  // Used when identifier shadowes some other identifier within the scope
+  IdentifierShadowed = 13,
+  // `package main`
+  IdentifierModule = 14,
+
+  // Function call/reference
+  IdentifierFunction = 15,
+  // Function definition only
+  IdentifierFunctionDefinition = 16,
+
+  // Macro call/reference
+  IdentifierMacro = 17,
+  // Macro definition only
+  IdentifierMacroDefinition = 18,
+
+  // non-builtin types, including namespaces
+  IdentifierType = 19,
+  // builtin types only, such as `str` for Python or `int` in Go
+  IdentifierBuiltinType = 20,
+
+  // Python decorators, c-like __attribute__
+  IdentifierAttribute = 21,
+
+  // `\b`
+  RegexEscape = 22,
+  // `*`, `+`
+  RegexRepeated = 23,
+  // `.`
+  RegexWildcard = 24,
+  // `(`, `)`, `[`, `]`
+  RegexDelimiter = 25,
+  // `|`, `-`
+  RegexJoin = 26,
+
+  // Literal strings: "Hello, world!"
+  StringLiteral = 27,
+  // non-regex escapes: "\t", "\n"
+  StringLiteralEscape = 28,
+  // datetimes within strings, special words within a string, `{}` in format strings
+  StringLiteralSpecial = 29,
+  // "key" in { "key": "value" }, useful for example in JSON
+  StringLiteralKey = 30,
+  // 'c' or similar, in languages that differentiate strings and characters
+  CharacterLiteral = 31,
+  // Literal numbers, both floats and integers
+  NumericLiteral = 32,
+  // `true`, `false`
+  BooleanLiteral = 33,
+
+  // Used for XML-like tags
+  Tag = 34,
+  // Attribute name in XML-like tags
+  TagAttribute = 35,
+  // Delimiters for XML-like tags
+  TagDelimiter = 36,
+}
+
+// const syntaxKinds = [
+// // export enum SyntaxKind {
+// //     UnspecifiedSyntaxKind = 0,
+//   '',
+// //     Operator = 1,
+//   'hl-operator',
+// //     Comment = 2,
+//   'hl-comment',
+// //     PunctuationDelimiter = 3,
+//   'hl-punction hl-section hl-brackets',
+// //     PunctuationBracket = 4,
+//   'hl-punction hl-section hl-brackets',
+// //     PunctuationSpecial = 5,
+//   'hl-punction hl-section hl-brackets',
+// //     Keyword = 6,
+//   'hl-keyword',
+// //     Identifier = 7,
+//   'hl-variable',
+// //     BuiltinIdentifier = 8,
+//   'hl-variable',
+// //     NullIdentifier = 9,
+//   'hl-null',
+// //     ConstantIdentifier = 10,
+//   'hl-constant',
+// //     MutableGlobalIdentifier = 11,
+//   'hl-variable',
+// //     ParameterIdentifier = 12,
+//   'hl-variable',
+// //     LocalIdentifier = 13,
+//   'hl-variable',
+// //     ShadowedIdentifier = 14,
+//   'hl-variable',
+// //     ModuleIdentifier = 15,
+//   'hl-variable',
+// //     MacroIdentifier = 16,
+//   'hl-variable',
+// //     StringLiteral = 17,
+//   'hl-string',
+// //     StringLiteralRegex = 18,
+//   'hl-regexp hl-string',
+// //     StringLiteralEscape = 19,
+//   'hl-constant hl-character hl-escape',
+// //     StringLiteralSpecial = 20,
+//   'hl-constant hl-string',
+// //     StringLiteralKey = 21,
+//   'hl-constant hl-string',
+// //     CharacterLiteral = 22,
+//   'hl-constant hl-character',
+// //     NumericLiteral = 23,
+//   'hl-constant hl-numeric',
+// //     BooleanLiteral = 24,
+//   'hl-boolean',
+// //     FunctionDefinition = 25,
+//   'hl-entity hl-name hl-function',
+// //     MacroDefinition = 26,
+//   'hl-function',
+// //     TypeIdentifier = 27,
+//   'hl-storage hl-type',
+// //     BuiltinTypeIdentifier = 28,
+//   'hl-storage hl-type',
+// //     AttributeIdentifier = 29,
+//   'hl-attribute-name',
+// //     Tag = 30,
+//   'hl-tag',
+// //     TagAttribute = 31,
+//   'hl-tag',
+// //     TagDelimiter = 32
+//   'hl-tag'
+// // }
+// ]
+
 function range(occurrence: Occurrence): Range {
     const start = new Position(occurrence.range[0], occurrence.range[1])
     const end =
@@ -403,7 +552,6 @@ function range(occurrence: Occurrence): Range {
 function renderLsifHtml(blob: BlobFileFields): void {
     if (blob.highlight.lsif) {
         const document = JSON.parse(blob.highlight.lsif) as Document
-        console.log({ document })
         const language = 'go'
         const lines = blob.content.replaceAll('\r\n', '\n').split('\n')
         const html = new HtmlBuilder()
@@ -425,10 +573,11 @@ function renderLsifHtml(blob: BlobFileFields): void {
             ) {
                 const occurrence = document.occurrences[documentIndex]
                 const r = range(occurrence)
+                let kind = SyntaxKind[occurrence.syntaxKind];
                 if (occurrence.syntaxKind) {
                     html.plaintext(line.slice(start, r.start.character))
                     html.span(
-                        `class="hl-${syntaxKinds[occurrence.syntaxKind]}"`,
+                        `class="hl-typed-${kind}"`,
                         line.slice(r.start.character, r.end.character)
                     )
                     start = r.end.character

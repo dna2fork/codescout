@@ -592,13 +592,26 @@
     --hl-green-1: #d3f9d8;
     --hl-green-2: #a3be8c;
     --hl-purple: #b48ead;
+    --hl-bright-purple: #C678DD;
     --hl-orange: #d08770;
+    --hl-orange-light: #dca581;
     --hl-brown: #ab7967;
     --hl-black: #2b303b;
     --hl-white: #f2f4f8;
     --hl-bg-red: #bf616a;
     --hl-bg-dark-red: #350b10;
     --hl-bg-dark-green: #0e2414;
+
+    // TJ ADDED THESE TO TEST {{{
+    .hl-boolean {
+        color: var(--hl-orange);
+    }
+
+    .hl-null {
+        color: var(--hl-orange);
+        filter: brightness(130%);
+    }
+    // }}}
 
     .hl-source,
     .hl-text {
@@ -773,5 +786,115 @@
                 color: var(--hl-green-2);
             }
         }
+    }
+
+    .hl-typed-Comment {
+        color: var(--hl-dark-green);
+    }
+
+    .hl-typed-PunctuationDelimiter {
+        color: var(--hl-orange);
+    }
+    .hl-typed-PunctuationBracket {
+        color: var(--hl-orange);
+    }
+
+    .hl-typed-IdentifierKeyword {
+        color: var(--hl-dark-blue-3);
+    }
+
+    .hl-typed-IdentifierOperator {
+        color: var(--hl-dark-blue-1);
+    }
+
+    .hl-typed-Identifier {
+        color: var(--hl-blue);
+    }
+    .hl-typed-IdentifierBuiltin {
+        color: var(--hl-blue);
+        filter: brightness(105%);
+    }
+    .hl-typed-IdentifierNull {
+        color: var(--hl-orange);
+        filter: brightness(130%);
+    }
+    .hl-typed-BooleanLiteral {
+        color: var(--hl-orange);
+    }
+    .hl-typed-IdentifierConstant {
+        color: var(--hl-dark-blue-1);
+    }
+    .hl-typed-IdentifierMutableGlobal {
+        color: var(--hl-dark-blue-1);
+    }
+    .hl-typed-IdentifierParameter {
+    }
+    .hl-typed-IdentifierLocal {
+    }
+    .hl-typed-IdentifierShadowed {
+    }
+    .hl-typed-IdentifierModule {
+    }
+
+    .hl-typed-IdentifierFunction {
+        color: var(--hl-yellow);
+    }
+    .hl-typed-IdentifierFunctionDefinition {
+        color: var(--hl-yellow);
+    }
+
+    .hl-typed-IdentifierMacro {
+        color: var(--hl-yellow);
+    }
+    .hl-typed-IdentifierMacroDefinition {
+        color: var(--hl-yellow);
+    }
+
+    .hl-typed-IdentifierType {
+        color: var(--hl-blue);
+    }
+    .hl-typed-IdentifierBuiltinType {
+        color: var(--hl-blue);
+    }
+
+    .hl-typed-IdentifierAttribute {
+        color: var(--hl-purple);
+    }
+
+    .hl-typed-RegexEscape {
+    }
+    .hl-typed-RegexRepeated {
+    }
+    .hl-typed-RegexWildcard {
+    }
+    .hl-typed-RegexDelimiter {
+    }
+    .hl-typed-RegexJoin {
+    }
+
+    .hl-typed-StringLiteral {
+        color: var(--hl-red);
+    }
+    .hl-typed-StringLiteralEscape {
+        color: var(--hl-red);
+    }
+    .hl-typed-StringLiteralSpecial {
+        color: var(--hl-red);
+    }
+    .hl-typed-StringLiteralKey {
+        color: var(--hl-red);
+    }
+    .hl-typed-CharacterLiteral {
+        color: var(--hl-red);
+    }
+    .hl-typed-NumericLiteral {
+        color: var(--hl-green-1);
+    }
+
+    .hl-typed-Tag {
+    }
+    .hl-typed-TagAttribute {
+    }
+    .hl-typed-TagDelimiter {
     }
 }

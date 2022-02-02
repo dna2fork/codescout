@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-enry/go-enry/v2"
 	"github.com/opentracing-contrib/go-stdlib/nethttp"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
@@ -107,6 +108,9 @@ var client = &http.Client{Transport: &nethttp.Transport{}}
 
 // Highlight performs a query to highlight some code.
 func (c *Client) Highlight(ctx context.Context, q *Query, isTreeSitterEnabled bool) (*Response, error) {
+	filetype := enry.GetLanguage(q.Filepath, []byte(q.Code))
+	fmt.Println("ENRY: ", filetype)
+
 	// Build the request.
 	jsonQuery, err := json.Marshal(q)
 	if err != nil {

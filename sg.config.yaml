@@ -30,7 +30,7 @@ env:
   REPO_UPDATER_URL: http://127.0.0.1:3182
   REDIS_ENDPOINT: 127.0.0.1:6379
   SYMBOLS_URL: http://localhost:3184
-  SRC_SYNTECT_SERVER: http://localhost:9238
+  SRC_SYNTECT_SERVER: http://localhost:8000
   SRC_FRONTEND_INTERNAL: localhost:3090
   GRAFANA_SERVER_URL: http://localhost:3370
   PROMETHEUS_URL: http://localhost:9090
@@ -346,7 +346,8 @@ commands:
     cmd: |
       docker run --name=syntax-highlighter --rm -p9238:9238 \
       -e WORKERS=1 -e ROCKET_ADDRESS=0.0.0.0 \
-      5c9e7c7759d32c5a117311445c35699e67920eadf6e7cd0982bb51f9ba03b4e2
+      sourcegraph/syntax-highlighter
+      #5c9e7c7759d32c5a117311445c35699e67920eadf6e7cd0982bb51f9ba03b4e2
     install: |
       # Remove containers by the old name, too.
       docker inspect syntect_server >/dev/null 2>&1 && docker rm -f syntect_server || true

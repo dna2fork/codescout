@@ -1590,8 +1590,8 @@ type SettingsExperimentalFeatures struct {
 	ShowSearchContextManagement *bool `json:"showSearchContextManagement,omitempty"`
 	// ShowSearchNotebook description: Enables the search notebook at search/notebook
 	ShowSearchNotebook *bool `json:"showSearchNotebook,omitempty"`
-	// UseTreesitter description: The maximum number of files a repo can have to use case-insensitive fuzzy finding
-	UseTreesitter *bool `json:"useTreesitter,omitempty"`
+	// TreeSitterEnabled description: The maximum number of files a repo can have to use case-insensitive fuzzy finding
+	TreeSitterEnabled *bool `json:"treeSitterEnabled,omitempty"`
 }
 
 // SiteConfiguration description: Configuration for a Sourcegraph site.

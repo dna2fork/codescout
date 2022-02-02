@@ -197,7 +197,7 @@
             "pointer": true
           }
         },
-        "useTreesitter": {
+        "treeSitterEnabled": {
           "description": "The maximum number of files a repo can have to use case-insensitive fuzzy finding",
           "type": "boolean",
           "default": false,

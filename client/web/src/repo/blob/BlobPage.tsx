@@ -130,7 +130,7 @@ export const BlobPage: React.FunctionComponent<Props> = props => {
     )
 
     const settings = getExperimentalFeatures(props.settingsCascade.final);
-    const treeSitterEnabled = settings.useTreesitter ? true : false
+    const treeSitterEnabled = settings.treeSitterEnabled ? true : false
 
     // Bundle latest blob with all other file info to pass to `Blob`
     // Prevents https://github.com/sourcegraph/sourcegraph/issues/14965 by not allowing

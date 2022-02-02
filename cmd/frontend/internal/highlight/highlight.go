@@ -193,11 +193,8 @@ func Code(ctx context.Context, p Params) (h template.HTML, l *lsif_typed.Documen
 
 	p.Filepath = normalizeFilepath(p.Filepath)
 
-	// filetype, useTreesitter, err := ...
 	filetype := enry.GetLanguage(p.Filepath, []byte(code))
-	// TODO: Decide how to write this, not sure I like this very much
 	useTreeSitter := p.TreeSitterEnabled && client.IsTreesitterSupported(filetype)
-	fmt.Println("TreeSitterEnabled: ", filetype, "->", p.TreeSitterEnabled, client.IsTreesitterSupported(filetype))
 
 	resp, err := client.Highlight(ctx, &gosyntect.Query{
 		Code:             code,

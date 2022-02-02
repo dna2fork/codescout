@@ -14,10 +14,6 @@ You can then e.g. `GET` http://localhost:9238/health or http://host.docker.inter
 
 See [API](./docs/api.md)
 
-## Client
-
-[gosyntect](https://github.com/sourcegraph/gosyntect) is a Go package + CLI program to make requests against syntect_server.
-
 ## Configuration
 
 By default on startup, `syntect_server` will list all features (themes + file types) it supports. This can be disabled by setting `QUIET=true` in the environment.

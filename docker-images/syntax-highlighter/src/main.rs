@@ -21,8 +21,10 @@ fn syntect(q: Json<SourcegraphQuery>) -> JsonValue {
 
 #[post("/lsif", format = "application/json", data = "<q>")]
 fn lsif(q: Json<SourcegraphQuery>) -> JsonValue {
-    sg_syntax::lsif_highlight(q.into_inner())
-        .unwrap_or_else(|_| json!({"error": "could not lsif highlight", "code": "panic"}))
+    match sg_syntax::lsif_highlight(q.into_inner()) {
+        Ok(v) => v,
+        Err(err) => err,
+    }
 }
 
 #[get("/health")]

@@ -36,6 +36,10 @@ pub struct SourcegraphQuery {
     #[serde(default)]
     pub filepath: String,
 
+    // The language defined by the server. Required to tree-sitter to use for the filetype name.
+    // default empty string value for backwards compat with clients who do not specify this field.
+    pub filetype: Option<String>,
+
     // If css is set, the highlighted code will be returned as a HTML table with CSS classes
     // annotating the highlighted types.
     #[serde(default)]

@@ -116,38 +116,26 @@ lazy_static::lazy_static! {
     };
 }
 
-pub fn lsif_highlight(q: SourcegraphQuery) -> std::result::Result<JsonValue, JsonValue> {
-    SYNTAX_SET.with(|syntax_set| {
-        // Determine syntax definition by extension.
-        let syntax_def = match determine_language(&q, syntax_set) {
-            Ok(v) => v,
-            Err(e) => return Err(e),
-        };
+pub fn jsonify_err(e: impl ToString) -> JsonValue {
+    json!({"error": e.to_string()})
+}
 
-        match syntax_def.name.to_lowercase().as_str() {
-            filetype @ "go" => {
-                // TODO: Can encode this with json if we use protobuf 3.0.0-alpha,
-                // but then we need to generate the bindings that way too.
-                //
-                // For now just send the bytes as an array of bytes (can be deserialized in backend
-                // I guess and then sent to typescript land via JSON).
-                let data = match index_language(filetype, &q.code) {
-                    Ok(data) => data,
-                    Err(e) => return Err(json!({"error": e.to_string()})),
-                };
+pub fn lsif_highlight(q: SourcegraphQuery) -> Result<JsonValue, JsonValue> {
+    let filetype = q
+        .filetype
+        .ok_or_else(|| json!({"error": "Must pass a filetype for /lsif" }))?
+        .to_lowercase();
 
-                let encoded = match data.write_to_bytes() {
-                    Ok(encoded) => encoded,
-                    Err(e) => return Err(json!({"error": e.to_string()})),
-                };
+    if !CONFIGURATIONS.contains_key(filetype.as_str()) {
+        Err(json!({
+            "error": format!("{} is not a valid filetype for treesitter", filetype)
+        }))
+    } else {
+        let data = index_language(&filetype, &q.code).map_err(jsonify_err)?;
+        let encoded = data.write_to_bytes().map_err(jsonify_err)?;
 
-                Ok(json!({"data": base64::encode(&encoded), "plaintext": false}))
-            }
-            _ => {
-                unreachable!();
-            }
-        }
-    })
+        Ok(json!({"data": base64::encode(&encoded), "plaintext": false}))
+    }
 }
 
 pub fn index_language(filetype: &str, code: &str) -> Result<Document, Error> {

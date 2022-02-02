@@ -18,6 +18,8 @@ export class Range {
     constructor(public readonly start: Position, public readonly end: Position) {}
 }
 
+// This is copy & pasted from the enum defined in lsif.proto.
+// Make sure to update it whenever you update lsif.proto
 export enum SyntaxKind {
     UnspecifiedSyntaxKind = 0,
 

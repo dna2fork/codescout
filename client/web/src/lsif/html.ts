@@ -1,4 +1,4 @@
-import { Document, Occurrence, Position, Range, SyntaxKind } from './spec';
+import { Document, Occurrence, Position, Range, SyntaxKind } from './spec'
 
 class HtmlBuilder {
     public readonly buffer: string[] = []

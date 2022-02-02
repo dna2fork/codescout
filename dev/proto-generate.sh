@@ -23,6 +23,6 @@ GOBIN="$PWD/.bin" ./.bin/buf generate
 
 echo "======================"
 echo "NOTE:"
-echo "If updating SyntaxKind, make sure to update: XXXXX"
+echo "If updating SyntaxKind, make sure to update: client/web/src/lsif/spec.ts"
 echo "======================"
 

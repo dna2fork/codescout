@@ -197,6 +197,14 @@
             "pointer": true
           }
         },
+        "useTreesitter": {
+          "description": "The maximum number of files a repo can have to use case-insensitive fuzzy finding",
+          "type": "boolean",
+          "default": false,
+          "!go": {
+            "pointer": true
+          }
+        },
         "batchChangesExecution": {
           "description": "Enables/disables the Batch Changes server side execution feature.",
           "type": "boolean",

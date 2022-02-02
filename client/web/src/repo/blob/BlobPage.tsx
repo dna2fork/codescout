@@ -44,7 +44,8 @@ import { GoToRawAction } from './GoToRawAction'
 import { useBlobPanelViews } from './panel/BlobPanel'
 import { RenderedFile } from './RenderedFile'
 import { RenderedSearchNotebookMarkdown, SEARCH_NOTEBOOK_FILE_EXTENSION } from './RenderedSearchNotebookMarkdown'
-import { render as renderLsifHtml } from '../../lsif/html';
+import { render as renderLsifHtml } from '../../lsif/html'
+import { getExperimentalFeatures } from '../../util/get-experimental-features'
 
 interface Props
     extends AbsoluteRepoFile,
@@ -128,6 +129,9 @@ export const BlobPage: React.FunctionComponent<Props> = props => {
         }, [filePath, revision, repoName, repoUrl, props.telemetryService])
     )
 
+    const settings = getExperimentalFeatures(props.settingsCascade.final);
+    const treeSitterEnabled = settings.useTreesitter ? true : false
+
     // Bundle latest blob with all other file info to pass to `Blob`
     // Prevents https://github.com/sourcegraph/sourcegraph/issues/14965 by not allowing
     // components to use current file props while blob hasn't updated, since all information
@@ -147,6 +151,7 @@ export const BlobPage: React.FunctionComponent<Props> = props => {
                             commitID,
                             filePath,
                             disableTimeout,
+                            treeSitterEnabled,
                         })
                     ),
                     map(blob => {

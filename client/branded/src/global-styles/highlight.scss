@@ -592,26 +592,13 @@
     --hl-green-1: #d3f9d8;
     --hl-green-2: #a3be8c;
     --hl-purple: #b48ead;
-    --hl-bright-purple: #C678DD;
     --hl-orange: #d08770;
-    --hl-orange-light: #dca581;
     --hl-brown: #ab7967;
     --hl-black: #2b303b;
     --hl-white: #f2f4f8;
     --hl-bg-red: #bf616a;
     --hl-bg-dark-red: #350b10;
     --hl-bg-dark-green: #0e2414;
-
-    // TJ ADDED THESE TO TEST {{{
-    .hl-boolean {
-        color: var(--hl-orange);
-    }
-
-    .hl-null {
-        color: var(--hl-orange);
-        filter: brightness(130%);
-    }
-    // }}}
 
     .hl-source,
     .hl-text {

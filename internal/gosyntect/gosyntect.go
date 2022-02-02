@@ -16,9 +16,6 @@ import (
 
 // Query represents a code highlighting query to the syntect_server.
 type Query struct {
-	// Extension is deprecated: use Filepath instead.
-	Extension string `json:"extension"`
-
 	// Filepath is the file path of the code. It can be the full file path, or
 	// just the name and extension.
 	//
@@ -39,6 +36,10 @@ type Query struct {
 
 	// CSS causes results to be returned in HTML table format with CSS class
 	// names annotating the spans rather than inline styles.
+	//
+	// TODO: I think we can just delete this? And theme? We don't use these.
+	// Then we could remove themes from syntect as well. I don't think we
+	// have any use case for these anymore (and haven't for awhile).
 	CSS bool `json:"css"`
 
 	// LineLengthLimit is the maximum length of line that will be highlighted if set.

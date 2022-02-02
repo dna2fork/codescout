@@ -25,10 +25,16 @@ lazy_static::lazy_static! {
     static ref THEME_SET: ThemeSet = ThemeSet::load_defaults();
 }
 
+/// Struct from: internal/gosyntect/gosyntect.go
+///
+/// Keep in sync with that struct.
 #[derive(Deserialize)]
 pub struct SourcegraphQuery {
     // Deprecated field with a default empty string value, kept for backwards
     // compatability with old clients.
+    //
+    // TODO: Can I just delete this because this image will only run for a particular sourcegraph
+    // version... so they can't be out of sync anymore, which is pretty cool
     #[serde(default)]
     pub extension: String,
 

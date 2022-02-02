@@ -8,7 +8,7 @@ use rocket::serde::json::serde_json::json;
 use rocket::serde::json::Value as JsonValue;
 use tree_sitter_highlight::{HighlightConfiguration, Highlighter as TSHighlighter};
 
-use crate::{determine_language, SourcegraphQuery, SYNTAX_SET};
+use crate::SourcegraphQuery;
 use sg_lsif::{Document, Occurrence, SyntaxKind};
 use sg_macros::include_project_file_optional;
 

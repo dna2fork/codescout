@@ -2,6 +2,7 @@ package janitor
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/cockroachdb/errors"
@@ -63,6 +64,7 @@ func NewUploadExpirer(
 }
 
 func (e *uploadExpirer) Handle(ctx context.Context) (err error) {
+	log15.Info("UPLOAD EXPIRER")
 	// Get the batch of repositories that we'll handle in this invocation of the periodic goroutine. This
 	// set should contain repositories that have yet to be updated, or that have been updated least recently.
 	// This allows us to update every repository reliably, even if it takes a long time to process through
@@ -194,7 +196,9 @@ func (e *uploadExpirer) handleUploads(
 	expiredUploadIDs := make([]int, 0, len(uploads))
 
 	for _, upload := range uploads {
+		log15.Warn(fmt.Sprintf("Looking at upload %s@%s", upload.RepositoryName, upload.Commit[:7]))
 		protected, checkErr := e.isUploadProtectedByPolicy(ctx, commitMap, upload, now)
+		log15.Info("(Done)")
 		if checkErr != nil {
 			if err == nil {
 				err = checkErr
@@ -210,6 +214,7 @@ func (e *uploadExpirer) handleUploads(
 		if protected {
 			protectedUploadIDs = append(protectedUploadIDs, upload.ID)
 		} else {
+			log15.Error("WHOUPS", "repositoryName", upload.RepositoryName, "commit", upload.Commit[:7], "commitMap", commitMap)
 			expiredUploadIDs = append(expiredUploadIDs, upload.ID)
 		}
 	}
@@ -227,7 +232,9 @@ func (e *uploadExpirer) handleUploads(
 		}
 	}
 
-	e.metrics.numUploadsExpired.Add(float64(len(expiredUploadIDs)))
+	count := len(expiredUploadIDs)
+	log15.Warn("Expiring codeintel uploads", "count", count)
+	e.metrics.numUploadsExpired.Add(float64(count))
 	return err
 }
 

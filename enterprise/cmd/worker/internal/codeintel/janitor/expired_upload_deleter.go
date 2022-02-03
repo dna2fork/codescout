@@ -33,12 +33,14 @@ func NewExpiredUploadDeleter(dbStore DBStore, interval time.Duration, metrics *m
 }
 
 func (e *expiredUploadDeleter) Handle(ctx context.Context) error {
+	log15.Warn("Trying to soft delete expired uploads")
+
 	count, err := e.dbStore.SoftDeleteExpiredUploads(ctx)
 	if err != nil {
 		return errors.Wrap(err, "SoftDeleteExpiredUploads")
 	}
 	if count > 0 {
-		log15.Debug("Deleted expired upload uploads", "count", count)
+		log15.Error("Deleted expired codeintel uploads", "count", count)
 		e.metrics.numUploadRecordsRemoved.Add(float64(count))
 	}
 

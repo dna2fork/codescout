@@ -2,6 +2,7 @@ package commitgraph
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/cockroachdb/errors"
@@ -64,6 +65,7 @@ func (u *Updater) Handle(ctx context.Context) error {
 
 	var updateErr error
 	for repositoryID, dirtyFlag := range repositoryIDs {
+		log15.Warn(fmt.Sprintf("UPDATING COMMIT GRAPH FOR %d", repositoryID))
 		if err := u.tryUpdate(ctx, repositoryID, dirtyFlag); err != nil {
 			if updateErr == nil {
 				updateErr = err

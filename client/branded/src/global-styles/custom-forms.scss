@@ -1,6 +1,5 @@
 :root {
     --line-height-base: 1.4285714286;
-    --border-radius: 0.25rem;
     --custom-forms-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
         box-shadow 0.15s ease-in-out;
     --input-line-height: var(--line-height-base);
@@ -51,7 +50,7 @@ $custom-select-background: escape-svg($custom-select-indicator) no-repeat right 
     vertical-align: middle;
     background: var(--white) $custom-select-background;
     border: var(--border-width) solid var(--gray-04);
-    border-radius: var(--border-radius);
+    border-radius: 0.25rem;
     appearance: none;
     transition: var(--custom-forms-transition);
 

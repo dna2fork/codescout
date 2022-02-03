@@ -30,7 +30,10 @@ func main() {
 		if err != nil {
 			panic(errors.Wrapf(err, "failed to parse protobuf file '%s'", file))
 		}
-		els := reader.ConvertFlatToGraph(&index)
+		els, err := reader.ConvertTypedIndexToGraphIndex(&index)
+		if err != nil {
+			panic(errors.Wrapf(err, "failed reader.ConvertTypedIndexToGraphIndex"))
+		}
 		err = reader.WriteNDJSON(reader.ElementsToEmptyInterfaces(els), os.Stdout)
 		if err != nil {
 			panic(err)

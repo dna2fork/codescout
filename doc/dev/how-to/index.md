@@ -30,6 +30,7 @@
 - [Configure a test instance of Phabricator and Gitolite](configure_phabricator_gitolite.md)
 - [Test a Phabricator and Gitolite instance](test_phabricator.md)
 - [Adding or changing Buildkite secrets](adding_buildkite_secrets.md)
+- [How to test changes in dogfood](testing_in_dogfood.md)
 
 ## Executors
 

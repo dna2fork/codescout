@@ -173,6 +173,20 @@ func (g *graph) emitDocument(index *lsif_typed.Index, doc *lsif_typed.Document) 
 		if lsif_typed.IsLocalSymbol(info.Symbol) {
 			localResultIDs[info.Symbol] = g.emitResultSet(info, "")
 		}
+		for _, relationship := range info.Relationships {
+			if relationship.IsImplementation {
+				relationshipIDs, ok := g.infoIDs(relationship.Symbol, localResultIDs)
+				if ok && relationshipIDs.DefinitionResult > 0 {
+					// Not an imported symbol
+					continue
+				}
+				infoIDs, ok := g.infoIDs(info.Symbol, localResultIDs)
+				if !ok {
+					continue
+				}
+				g.emitMoniker(relationship.Symbol, "implementation", infoIDs.ResultSet)
+			}
+		}
 	}
 
 	var rangeIDs []int
@@ -183,7 +197,7 @@ func (g *graph) emitDocument(index *lsif_typed.Index, doc *lsif_typed.Document) 
 			continue
 		}
 		rangeIDs = append(rangeIDs, rangeID)
-		resultIDs, ok := g.resultIDs(occ.Symbol, localResultIDs)
+		resultIDs, ok := g.infoIDs(occ.Symbol, localResultIDs)
 		if !ok {
 			// Silently skip occurrences to symbols with no matching SymbolInformation.
 			continue
@@ -224,7 +238,7 @@ func (g *graph) emitReferenceResults(rangeID, documentID int, resultIDs symbolIn
 }
 
 func (g *graph) emitRelationship(relationship *lsif_typed.Relationship, rangeID, documentID int, localResultIDs map[string]symbolInformationIDs) []int {
-	relationshipIDs, ok := g.resultIDs(relationship.Symbol, localResultIDs)
+	relationshipIDs, ok := g.infoIDs(relationship.Symbol, localResultIDs)
 	if !ok {
 		return nil
 	}
@@ -324,7 +338,7 @@ func interpretLsifRange(rnge []int32) (startLine, startCharacter, endLine, endCh
 	return 0, 0, 0, 0, errors.Newf("invalid LSIF range %v", rnge)
 }
 
-func (g *graph) resultIDs(symbol string, localSymtab map[string]symbolInformationIDs) (symbolInformationIDs, bool) {
+func (g *graph) infoIDs(symbol string, localSymtab map[string]symbolInformationIDs) (symbolInformationIDs, bool) {
 	symtab := g.symbolToResultSet
 	if lsif_typed.IsLocalSymbol(symbol) {
 		symtab = localSymtab

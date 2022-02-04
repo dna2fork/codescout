@@ -7,12 +7,12 @@ import (
 	"github.com/cockroachdb/errors"
 
 	"github.com/sourcegraph/sourcegraph/cmd/symbols/internal/api/observability"
-	"github.com/sourcegraph/sourcegraph/cmd/symbols/internal/types"
+	sharedtypes "github.com/sourcegraph/sourcegraph/cmd/symbols/shared/types"
 	"github.com/sourcegraph/sourcegraph/internal/diskcache"
 )
 
 type CachedDatabaseWriter interface {
-	GetOrCreateDatabaseFile(ctx context.Context, args types.SearchArgs) (string, error)
+	GetOrCreateDatabaseFile(ctx context.Context, args sharedtypes.SearchArgs) (string, error)
 }
 
 type cachedDatabaseWriter struct {
@@ -32,7 +32,7 @@ func NewCachedDatabaseWriter(databaseWriter DatabaseWriter, cache diskcache.Stor
 // likely incompatible symbols service. Increment this when you change the database schema.
 const symbolsDBVersion = 4
 
-func (w *cachedDatabaseWriter) GetOrCreateDatabaseFile(ctx context.Context, args types.SearchArgs) (string, error) {
+func (w *cachedDatabaseWriter) GetOrCreateDatabaseFile(ctx context.Context, args sharedtypes.SearchArgs) (string, error) {
 	key := []string{
 		string(args.Repo),
 		fmt.Sprintf("%s-%d", args.CommitID, symbolsDBVersion),

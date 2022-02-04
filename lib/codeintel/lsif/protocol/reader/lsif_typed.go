@@ -119,16 +119,6 @@ func (g *graph) emitResultSet(info *lsif_typed.SymbolInformation, monikerKind st
 	if isExported {
 		definitionResult = g.emitVertex("definitionResult", nil)
 	}
-	//hasImplementationRelationship := false
-	//for _, relationship := range info.Relationships {
-	//	if relationship.IsImplementation {
-	//		hasImplementationRelationship = true
-	//		break
-	//	}
-	//}
-	//if hasImplementationRelationship {
-	//	implementationResult = g.emitVertex("implementationResult", nil)
-	//}
 	ids := symbolInformationIDs{
 		ResultSet:            g.emitVertex("resultSet", ResultSet{}),
 		DefinitionResult:     definitionResult,
@@ -139,9 +129,6 @@ func (g *graph) emitResultSet(info *lsif_typed.SymbolInformation, monikerKind st
 	if isExported {
 		g.emitEdge("textDocument/definition", Edge{OutV: ids.ResultSet, InV: ids.DefinitionResult})
 	}
-	//if hasImplementationRelationship {
-	//	g.emitEdge("textDocument/implementation", Edge{OutV: ids.ResultSet, InV: ids.ImplementationResult})
-	//}
 	g.emitEdge("textDocument/references", Edge{OutV: ids.ResultSet, InV: ids.ReferenceResult})
 	g.emitEdge("textDocument/hover", Edge{OutV: ids.ResultSet, InV: ids.HoverResult})
 	if monikerKind == "export" || monikerKind == "import" {

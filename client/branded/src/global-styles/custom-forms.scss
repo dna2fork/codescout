@@ -1,3 +1,21 @@
+.theme-light {
+    --input-bg: var(--white);
+    --input-disabled-bg: var(--gray-04);
+    --input-border-color: var(--gray-04);
+    --input-color: var(--gray-09);
+    --input-focus-border-color: var(--border-active-color);
+    --input-focus-box-shadow: var(--focus-box-shadow);
+}
+
+.theme-dark {
+    --input-bg: var(--gray-10);
+    --input-disabled-bg: var(--gray-08);
+    --input-border-color: var(--gray-08);
+    --input-color: var(--gray-04);
+    --input-focus-border-color: var(--border-active-color);
+    --input-focus-box-shadow: var(--focus-box-shadow);
+}
+
 :root {
     --line-height-base: 1.4285714286;
     --custom-forms-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
@@ -8,23 +26,20 @@
     --input-padding-y-sm: 0.25rem;
     --input-padding-x: 0.75rem;
     --input-padding-x-sm: 0.5rem;
-    --input-color: var(--gray-08);
     --border-width: 0.0625rem;
-    --input-height-border: calc(0.0625rem * 2);
+    --input-height-border: calc(1px * 2);
     --custom-select-height: add(
         var(--input-line-height) * 1em,
         add(var(--input-padding-y) * 2, var(--input-height-border), false)
     );
-    --custom-select-height-sm: add(
-        var(--input-line-height-sm) * 1em,
-        add(var(--input-padding-y-sm) * 2, var(--input-height-border), false)
+    --custom-select-height-sm: calc(
+        calc(var(--input-line-height-sm) * 1em) + calc(var(--input-padding-y-sm) * 2) + var(--input-height-border)
     );
     --custom-select-padding-y: var(--input-padding-y);
     --custom-select-padding-y-sm: var(--input-padding-y-sm);
     --custom-select-padding-x: var(--input-padding-x);
     --custom-select-padding-x-sm: var(--input-padding-x-sm);
     --custom-select-font-size: 0.875rem;
-    --custom-select-color: var(--gray-07);
     --custom-select-bg-size: 16px 16px;
 }
 
@@ -46,11 +61,11 @@ $custom-select-background: escape-svg($custom-select-indicator) no-repeat right 
     font-size: var(--custom-select-font-size);
     font-weight: 400;
     line-height: var(--line-height-base);
-    color: var(--custom-select-color);
+    color: var(--input-color);
     vertical-align: middle;
-    background: var(--white) $custom-select-background;
-    border: var(--border-width) solid var(--gray-04);
-    border-radius: 0.25rem;
+    background: var(--input-bg) $custom-select-background;
+    border: var(--border-width) solid var(--input-border-color);
+    border-radius: 0.1875rem;
     appearance: none;
     transition: var(--custom-forms-transition);
 
@@ -66,7 +81,7 @@ $custom-select-background: escape-svg($custom-select-indicator) no-repeat right 
             // in IE and (under certain conditions) Edge.
             // See https://github.com/twbs/bootstrap/issues/19398.
             color: var(--input-color);
-            background-color: var(--white);
+            background-color: var(--input-bg);
         }
     }
 
@@ -78,8 +93,8 @@ $custom-select-background: escape-svg($custom-select-indicator) no-repeat right 
     }
 
     &:disabled {
-        color: var(--gray-07);
-        background-color: var(--gray-03);
+        color: var(--input-color);
+        background-color: var(--input-disabled-bg);
     }
 
     // Hides the default caret in IE11
@@ -90,7 +105,7 @@ $custom-select-background: escape-svg($custom-select-indicator) no-repeat right 
     // Remove outline from select box in FF
     &:-moz-focusring {
         color: transparent;
-        text-shadow: 0 0 0 var(--custom-select-color);
+        text-shadow: 0 0 0 var(--input-color);
     }
 }
 

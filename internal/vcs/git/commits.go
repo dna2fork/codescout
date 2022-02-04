@@ -603,15 +603,19 @@ func parseBranchesContaining(lines []string) []string {
 
 // RefDescriptions returns a map from commits to descriptions of the tip of each
 // branch and tag of the given repository.
-func RefDescriptions(ctx context.Context, repo api.RepoName, checker authz.SubRepoPermissionChecker) (_ map[string][]gitdomain.RefDescription, err error) {
+func RefDescriptions(ctx context.Context, repo api.RepoName, checker authz.SubRepoPermissionChecker, gitObjs ...string) (map[string][]gitdomain.RefDescription, error) {
 	f := func(refPrefix string) (map[string][]gitdomain.RefDescription, error) {
-		args := append(make([]string, 0, 3), "for-each-ref")
+		args := append(make([]string, 0, 3+len(gitObjs)), "for-each-ref")
 		if refPrefix == "refs/tags/" {
 			args = append(args, "--format=%(*objectname):%(refname):%(HEAD):%(creatordate:iso8601-strict)")
 		} else {
 			args = append(args, "--format=%(objectname):%(refname):%(HEAD):%(creatordate:iso8601-strict)")
 		}
 		args = append(args, refPrefix)
+
+		for _, obj := range gitObjs {
+			args = append(args, "--points-at="+obj)
+		}
 
 		cmd := gitserver.DefaultClient.Command("git", args...)
 		cmd.Repo = repo

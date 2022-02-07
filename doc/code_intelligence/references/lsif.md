@@ -169,7 +169,7 @@ interchangeably with `Symbol`. The syntax for Symbol is the following:
   <symbol>               ::= <scheme> ' ' <package> ' ' { <descriptor> } | 'local ' <local-id>
   <package>              ::= <manager> ' ' <package-name> ' ' <version>
   <scheme>               ::= any UTF-8, escape spaces with double space.
-  <manager>              ::= same as above
+  <manager>              ::= same as above, use the placeholder '.' to indicate an empty value
   <package-name>         ::= same as above
   <version>              ::= same as above
   <descriptor>           ::= <package> | <type> | <term> | <method> | <type-parameter> | <parameter> | <meta>

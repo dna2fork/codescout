@@ -196,7 +196,7 @@ func (g *graph) emitDocument(index *lsif_typed.Index, doc *lsif_typed.Document) 
 // emitRelationships emits "referenceResults" and "implementationResult" based on the value of lsif_typed.SymbolInformation.Relationships
 func (g *graph) emitRelationships(rangeID, documentID int, resultIDs symbolInformationIDs, localResultIDs map[string]symbolInformationIDs, info *lsif_typed.SymbolInformation) {
 	var allReferenceResultIds []int
-	relationships, _ := g.inverseRelationships[info.Symbol]
+	relationships := g.inverseRelationships[info.Symbol]
 	for _, relationship := range relationships {
 		allReferenceResultIds = append(allReferenceResultIds, g.emitRelationship(relationship, rangeID, documentID, localResultIDs)...)
 	}
@@ -312,7 +312,7 @@ func (g *graph) emit(ty, label string, payload interface{}) int {
 // registerInverseRelationships method records the relationship in the opposite direction: parent->child.
 func (g *graph) registerInverseRelationships(info *lsif_typed.SymbolInformation) {
 	for _, relationship := range info.Relationships {
-		inverseRelationships, _ := g.inverseRelationships[relationship.Symbol]
+		inverseRelationships := g.inverseRelationships[relationship.Symbol]
 		g.inverseRelationships[relationship.Symbol] = append(inverseRelationships, &lsif_typed.Relationship{
 			Symbol:           info.Symbol,
 			IsReference:      relationship.IsReference,

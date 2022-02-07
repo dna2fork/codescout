@@ -91,11 +91,6 @@ func (s *symbolParser) error(message string) error {
 	return errors.Newf("%s\n%s\n%s^", message, s.SymbolString, strings.Repeat("_", s.index))
 }
 
-func (s *symbolParser) currentAndNext() rune {
-	result := s.current()
-	s.index++
-	return result
-}
 func (s *symbolParser) current() rune {
 	return s.Symbol[s.index]
 }

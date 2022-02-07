@@ -1,5 +1,6 @@
 /** Component exports */
-export { Button } from './Button'
+export { Button, ButtonGroup } from './Button'
+export type { ButtonGroupProps } from './Button'
 export { Alert, AlertLink } from './Alert'
 export { Container } from './Container'
 export { Checkbox, FlexTextArea, Input, RadioButton, Select, TextArea } from './Form'
@@ -7,7 +8,7 @@ export { Grid } from './Grid'
 export { LoadingSpinner } from './LoadingSpinner'
 export { PageHeader } from './PageHeader'
 export { PageSelector } from './PageSelector'
-export { Tabs, Tab, TabList, TabPanel, TabPanels } from './Tabs'
+export { Tabs, Tab, TabList, TabPanel, TabPanels, TabsProps, useTabsContext } from './Tabs'
 export { SourcegraphIcon } from './SourcegraphIcon'
 export { Badge, ProductStatusBadge } from './Badge'
 export { Panel } from './Panel'
@@ -27,7 +28,8 @@ export { Popover, PopoverTrigger, PopoverContent, Position, PopoverOpenEventReas
  * Type Exports
  * `export type` is required to avoid Webpack warnings.
  */
-export type { LinkProps } from './Link'
 export type { AlertProps, AlertLinkProps } from './Alert'
-export type { PopoverOpenEvent } from './Popover'
+export type { ButtonProps } from './Button'
 export type { ButtonLinkProps } from './ButtonLink'
+export type { LinkProps } from './Link'
+export type { PopoverOpenEvent } from './Popover'

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import { TelemetryProps } from '@sourcegraph/shared/src/telemetry/telemetryService'
 import { PageTitle } from '@sourcegraph/web/src/components/PageTitle'
 import { SelfHostedCta } from '@sourcegraph/web/src/components/SelfHostedCta'
-import { Container, PageHeader, Button } from '@sourcegraph/wildcard'
+import { Container, PageHeader, ButtonLink } from '@sourcegraph/wildcard'
 
 import styles from './AboutOrganizationPage.module.scss'
 interface AboutOrganizationPageProps extends TelemetryProps {}
@@ -34,10 +34,9 @@ export const AboutOrganizationPage: React.FunctionComponent<AboutOrganizationPag
                     target="_blank"
                     rel="noopener noreferrer"
                     variant="primary"
-                    as="a"
                 >
                     Sign up for private beta access <OpenInNewIcon className="icon-inline" />
-                </Button>
+                </ButtonLink>
             </Container>
             <SelfHostedCta
                 contentClassName={styles.selfHostedCtaContent}

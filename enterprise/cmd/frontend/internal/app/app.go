@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cockroachdb/errors"
 	gogithub "github.com/google/go-github/v41/github"
 	"github.com/graph-gophers/graphql-go"
 	"github.com/inconshreveable/log15"
@@ -24,7 +23,9 @@ import (
 	"github.com/sourcegraph/sourcegraph/internal/extsvc/auth"
 	"github.com/sourcegraph/sourcegraph/internal/extsvc/github"
 	"github.com/sourcegraph/sourcegraph/internal/jsonc"
+	"github.com/sourcegraph/sourcegraph/internal/repos"
 	"github.com/sourcegraph/sourcegraph/internal/types"
+	"github.com/sourcegraph/sourcegraph/lib/errors"
 )
 
 // Init initializes the app endpoints.
@@ -44,10 +45,7 @@ func Init(
 	}
 
 	dotcomConfig := conf.SiteConfig().Dotcom
-	if dotcomConfig == nil ||
-		dotcomConfig.GithubAppCloud == nil ||
-		dotcomConfig.GithubAppCloud.AppID == "" ||
-		dotcomConfig.GithubAppCloud.PrivateKey == "" {
+	if !repos.IsGitHubAppCloudEnabled(dotcomConfig) {
 		enterpriseServices.NewGitHubAppCloudSetupHandler = func() http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusNotFound)

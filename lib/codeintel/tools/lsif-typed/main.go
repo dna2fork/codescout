@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/cockroachdb/errors"
-	pb "github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"github.com/sourcegraph/sourcegraph/lib/codeintel/lsif_typed"
 
 	"github.com/sourcegraph/sourcegraph/lib/codeintel/lsif/protocol/reader"
@@ -26,7 +26,7 @@ func main() {
 			panic(err)
 		}
 		index := lsif_typed.Index{}
-		err = pb.Unmarshal(data, &index)
+		err = proto.Unmarshal(data, &index)
 		if err != nil {
 			panic(errors.Wrapf(err, "failed to parse protobuf file '%s'", file))
 		}

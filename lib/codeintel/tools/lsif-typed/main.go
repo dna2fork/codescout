@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/cockroachdb/errors"
-	"github.com/golang/protobuf/proto"
 	"github.com/sourcegraph/sourcegraph/lib/codeintel/lsif_typed"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/sourcegraph/sourcegraph/lib/codeintel/lsif/protocol/reader"
 )
@@ -16,12 +15,8 @@ import (
 func main() {
 	// parse file into LsifValues proto
 	file := os.Args[1]
-	fileReader, err := os.Open(file)
-	if err != nil {
-		panic(err)
-	}
 	if strings.HasSuffix(file, ".lsif-typed") {
-		data, err := ioutil.ReadAll(fileReader)
+		data, err := os.ReadFile(file)
 		if err != nil {
 			panic(err)
 		}

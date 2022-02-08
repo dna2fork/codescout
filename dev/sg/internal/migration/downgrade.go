@@ -11,7 +11,8 @@ import (
 	"github.com/sourcegraph/sourcegraph/lib/output"
 )
 
-func DowngradeTarget(databases []db.Database, commit string) error {
+// LeavesForCommit prints the leaves defined at the given commit (for every schema).
+func LeavesForCommit(databases []db.Database, commit string) error {
 	leavesByDatabase := make(map[string][]definition.Definition, len(databases))
 	for _, database := range databases {
 		definitions, err := readDefinitions(database)
@@ -19,7 +20,7 @@ func DowngradeTarget(databases []db.Database, commit string) error {
 			return err
 		}
 
-		leaves, err := selectLeavesOfCommit(database, definitions, commit)
+		leaves, err := selectLeavesForCommit(database, definitions, commit)
 		if err != nil {
 			return err
 		}
@@ -38,9 +39,9 @@ func DowngradeTarget(databases []db.Database, commit string) error {
 	return nil
 }
 
-// selectLeavesOfCommit selects the leaf definitions defined at the given commit for the
+// selectLeavesForCommit selects the leaf definitions defined at the given commit for the
 // gvien database.
-func selectLeavesOfCommit(database db.Database, ds *definition.Definitions, commit string) ([]definition.Definition, error) {
+func selectLeavesForCommit(database db.Database, ds *definition.Definitions, commit string) ([]definition.Definition, error) {
 	migrationsDir := filepath.Join("migrations", database.Name)
 
 	output, err := run.GitCmd("ls-tree", "-r", "--name-only", commit, migrationsDir)

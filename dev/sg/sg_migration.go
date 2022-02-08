@@ -43,13 +43,13 @@ var (
 		LongHelp:   cliutil.ConstructLongHelp(),
 	}
 
-	migrationDowngradeTargetFlagSet = flag.NewFlagSet("sg migration downgrade-target", flag.ExitOnError)
-	downgradeTargetCommand          = &ffcli.Command{
-		Name:       "downgrade-target",
-		ShortUsage: "sg migration downgrade-target <commit>",
-		ShortHelp:  "Return the migration leaves for the given target release",
-		FlagSet:    migrationDowngradeTargetFlagSet,
-		Exec:       migrationDowngradeTargetExec,
+	leavesFlagSet = flag.NewFlagSet("sg migration leaves", flag.ExitOnError)
+	leavesCommand = &ffcli.Command{
+		Name:       "leaves",
+		ShortUsage: "sg migration leaves <commit>",
+		ShortHelp:  "Identiy the migration leaves for the given commit",
+		FlagSet:    leavesFlagSet,
+		Exec:       leavesExec,
 		LongHelp:   cliutil.ConstructLongHelp(),
 	}
 
@@ -71,7 +71,7 @@ var (
 		Subcommands: []*ffcli.Command{
 			migrationAddCommand,
 			migrationSquashCommand,
-			downgradeTargetCommand,
+			leavesCommand,
 			upCommand,
 			upToCommand,
 			UndoCommand,
@@ -163,7 +163,7 @@ func migrationSquashExec(ctx context.Context, args []string) (err error) {
 	return migration.Squash(database, commit)
 }
 
-func migrationDowngradeTargetExec(ctx context.Context, args []string) (err error) {
+func leavesExec(ctx context.Context, args []string) (err error) {
 	if len(args) == 0 {
 		stdout.Out.WriteLine(output.Linef("", output.StyleWarning, "No commit specified"))
 		return flag.ErrHelp
@@ -173,5 +173,5 @@ func migrationDowngradeTargetExec(ctx context.Context, args []string) (err error
 		return flag.ErrHelp
 	}
 
-	return migration.DowngradeTarget(db.Databases(), args[0])
+	return migration.LeavesForCommit(db.Databases(), args[0])
 }

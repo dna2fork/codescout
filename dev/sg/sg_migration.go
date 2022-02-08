@@ -14,8 +14,6 @@ import (
 	"github.com/sourcegraph/sourcegraph/dev/sg/internal/stdout"
 	connections "github.com/sourcegraph/sourcegraph/internal/database/connections/live"
 	"github.com/sourcegraph/sourcegraph/internal/database/migration/cliutil"
-	"github.com/sourcegraph/sourcegraph/internal/database/migration/runner"
-	"github.com/sourcegraph/sourcegraph/internal/database/migration/schemas"
 	"github.com/sourcegraph/sourcegraph/internal/database/migration/store"
 	"github.com/sourcegraph/sourcegraph/internal/database/postgresdsn"
 	"github.com/sourcegraph/sourcegraph/internal/observation"
@@ -24,8 +22,8 @@ import (
 
 var (
 	migrationAddFlagSet          = flag.NewFlagSet("sg migration add", flag.ExitOnError)
-	migrationAddDatabaseNameFlag = migrationAddFlagSet.String("db", db.DefaultDatabase.Name, "The target database instance.")
-	migrationAddCommand          = &ffcli.Command{
+	migrationAddDatabaseNameFlag = migrationAddFlagSet.String("db", db.DefaultDatabase.Name, "The target schema to modify")
+	addCommand                   = &ffcli.Command{
 		Name:       "add",
 		ShortUsage: fmt.Sprintf("sg migration add [-db=%s] <name>", db.DefaultDatabase.Name),
 		ShortHelp:  "Add a new migration file",
@@ -34,14 +32,9 @@ var (
 		LongHelp:   cliutil.ConstructLongHelp(),
 	}
 
-	upCommand     = cliutil.Up("sg migration", runMigration, stdout.Out)
-	upToCommand   = cliutil.UpTo("sg migration", runMigration, stdout.Out)
-	UndoCommand   = cliutil.Undo("sg migration", runMigration, stdout.Out)
-	downToCommand = cliutil.DownTo("sg migration", runMigration, stdout.Out)
-
 	migrationSquashFlagSet          = flag.NewFlagSet("sg migration squash", flag.ExitOnError)
-	migrationSquashDatabaseNameFlag = migrationSquashFlagSet.String("db", db.DefaultDatabase.Name, "The target database instance")
-	migrationSquashCommand          = &ffcli.Command{
+	migrationSquashDatabaseNameFlag = migrationSquashFlagSet.String("db", db.DefaultDatabase.Name, "The target schema to modify")
+	squashCommand                   = &ffcli.Command{
 		Name:       "squash",
 		ShortUsage: fmt.Sprintf("sg migration squash [-db=%s] <current-release>", db.DefaultDatabase.Name),
 		ShortHelp:  "Collapse migration files from historic releases together",
@@ -49,6 +42,22 @@ var (
 		Exec:       migrationSquashExec,
 		LongHelp:   cliutil.ConstructLongHelp(),
 	}
+
+	migrationDowngradeTargetFlagSet = flag.NewFlagSet("sg migration downgrade-target", flag.ExitOnError)
+	downgradeTargetCommand          = &ffcli.Command{
+		Name:       "downgrade-target",
+		ShortUsage: "sg migration downgrade-target <commit>",
+		ShortHelp:  "Return the migration leaves for the given target release",
+		FlagSet:    migrationDowngradeTargetFlagSet,
+		Exec:       migrationDowngradeTargetExec,
+		LongHelp:   cliutil.ConstructLongHelp(),
+	}
+
+	upCommand       = cliutil.Up("sg migration", makeRunner, stdout.Out)
+	upToCommand     = cliutil.UpTo("sg migration", makeRunner, stdout.Out)
+	UndoCommand     = cliutil.Undo("sg migration", makeRunner, stdout.Out)
+	downToCommand   = cliutil.DownTo("sg migration", makeRunner, stdout.Out)
+	validateCommand = cliutil.Validate("sg validate", makeRunner, stdout.Out)
 
 	migrationFlagSet = flag.NewFlagSet("sg migration", flag.ExitOnError)
 	migrationCommand = &ffcli.Command{
@@ -60,22 +69,24 @@ var (
 			return flag.ErrHelp
 		},
 		Subcommands: []*ffcli.Command{
-			migrationAddCommand,
+			addCommand,
+			squashCommand,
+			downgradeTargetCommand,
 			upCommand,
 			upToCommand,
 			UndoCommand,
 			downToCommand,
-			migrationSquashCommand,
+			validateCommand,
 		},
 	}
 )
 
-func runMigration(ctx context.Context, options runner.Options) error {
+func makeRunner(ctx context.Context, schemaNames []string) (cliutil.Runner, error) {
 	storeFactory := func(db *sql.DB, migrationsTable string) connections.Store {
 		return connections.NewStoreShim(store.NewWithDB(db, migrationsTable, store.NewOperations(&observation.TestContext)))
 	}
 
-	return connections.RunnerFromDSNs(postgresdsn.RawDSNsBySchema(schemas.SchemaNames), "sg", storeFactory).Run(ctx, options)
+	return connections.RunnerFromDSNs(postgresdsn.RawDSNsBySchema(schemaNames), "sg", storeFactory), nil
 }
 
 func migrationAddExec(ctx context.Context, args []string) error {
@@ -150,4 +161,17 @@ func migrationSquashExec(ctx context.Context, args []string) (err error) {
 	stdout.Out.Writef("Squashing migration files defined up through %s", commit)
 
 	return migration.Squash(database, commit)
+}
+
+func migrationDowngradeTargetExec(ctx context.Context, args []string) (err error) {
+	if len(args) == 0 {
+		stdout.Out.WriteLine(output.Linef("", output.StyleWarning, "No commit specified"))
+		return flag.ErrHelp
+	}
+	if len(args) != 1 {
+		stdout.Out.WriteLine(output.Linef("", output.StyleWarning, "ERROR: too many arguments"))
+		return flag.ErrHelp
+	}
+
+	return migration.DowngradeTarget(db.Databases(), args[0])
 }

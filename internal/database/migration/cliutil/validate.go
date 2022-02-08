@@ -16,7 +16,7 @@ import (
 func Validate(commandName string, factory RunnerFactory, out *output.Output) *ffcli.Command {
 	var (
 		flagSet        = flag.NewFlagSet(fmt.Sprintf("%s validate", commandName), flag.ExitOnError)
-		schemaNameFlag = flagSet.String("db", "all", `The target schema(s) to modify. Comma-separated values are accepted. Supply "all" (the default) to validate all schemas.`)
+		schemaNameFlag = flagSet.String("db", "all", `The target schema(s) to validate. Comma-separated values are accepted. Supply "all" (the default) to validate all schemas.`)
 	)
 
 	exec := func(ctx context.Context, args []string) error {

@@ -14,6 +14,7 @@ import (
 	"github.com/sourcegraph/sourcegraph/dev/sg/internal/stdout"
 	connections "github.com/sourcegraph/sourcegraph/internal/database/connections/live"
 	"github.com/sourcegraph/sourcegraph/internal/database/migration/cliutil"
+	"github.com/sourcegraph/sourcegraph/internal/database/migration/runner"
 	"github.com/sourcegraph/sourcegraph/internal/database/migration/store"
 	"github.com/sourcegraph/sourcegraph/internal/database/postgresdsn"
 	"github.com/sourcegraph/sourcegraph/internal/observation"
@@ -57,7 +58,8 @@ var (
 	upToCommand     = cliutil.UpTo("sg migration", makeRunner, stdout.Out)
 	UndoCommand     = cliutil.Undo("sg migration", makeRunner, stdout.Out)
 	downToCommand   = cliutil.DownTo("sg migration", makeRunner, stdout.Out)
-	validateCommand = cliutil.Validate("sg validate", makeRunner, stdout.Out)
+	validateCommand = cliutil.Validate("sg migration", makeRunner, stdout.Out)
+	addLogCommand   = cliutil.AddLog("sg migration", makeRunner, stdout.Out)
 
 	migrationFlagSet = flag.NewFlagSet("sg migration", flag.ExitOnError)
 	migrationCommand = &ffcli.Command{
@@ -77,6 +79,7 @@ var (
 			UndoCommand,
 			downToCommand,
 			validateCommand,
+			addLogCommand,
 		},
 	}
 )
@@ -86,7 +89,15 @@ func makeRunner(ctx context.Context, schemaNames []string) (cliutil.Runner, erro
 		return connections.NewStoreShim(store.NewWithDB(db, migrationsTable, store.NewOperations(&observation.TestContext)))
 	}
 
-	return connections.RunnerFromDSNs(postgresdsn.RawDSNsBySchema(schemaNames), "sg", storeFactory), nil
+	return &runnerShim{connections.RunnerFromDSNs(postgresdsn.RawDSNsBySchema(schemaNames), "sg", storeFactory)}, nil
+}
+
+type runnerShim struct {
+	*runner.Runner
+}
+
+func (r *runnerShim) Store(ctx context.Context, schemaName string) (cliutil.Store, error) {
+	return r.Runner.Store(ctx, schemaName)
 }
 
 func migrationAddExec(ctx context.Context, args []string) error {

@@ -23,7 +23,7 @@ import (
 var (
 	migrationAddFlagSet          = flag.NewFlagSet("sg migration add", flag.ExitOnError)
 	migrationAddDatabaseNameFlag = migrationAddFlagSet.String("db", db.DefaultDatabase.Name, "The target schema to modify")
-	addCommand                   = &ffcli.Command{
+	migrationAddCommand          = &ffcli.Command{
 		Name:       "add",
 		ShortUsage: fmt.Sprintf("sg migration add [-db=%s] <name>", db.DefaultDatabase.Name),
 		ShortHelp:  "Add a new migration file",
@@ -34,7 +34,7 @@ var (
 
 	migrationSquashFlagSet          = flag.NewFlagSet("sg migration squash", flag.ExitOnError)
 	migrationSquashDatabaseNameFlag = migrationSquashFlagSet.String("db", db.DefaultDatabase.Name, "The target schema to modify")
-	squashCommand                   = &ffcli.Command{
+	migrationSquashCommand          = &ffcli.Command{
 		Name:       "squash",
 		ShortUsage: fmt.Sprintf("sg migration squash [-db=%s] <current-release>", db.DefaultDatabase.Name),
 		ShortHelp:  "Collapse migration files from historic releases together",
@@ -69,8 +69,8 @@ var (
 			return flag.ErrHelp
 		},
 		Subcommands: []*ffcli.Command{
-			addCommand,
-			squashCommand,
+			migrationAddCommand,
+			migrationSquashCommand,
 			downgradeTargetCommand,
 			upCommand,
 			upToCommand,

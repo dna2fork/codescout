@@ -18,3 +18,15 @@ type Store interface {
 }
 
 type RunnerFactory func(ctx context.Context, schemaNames []string) (Runner, error)
+
+type runnerShim struct {
+	*runner.Runner
+}
+
+func NewShim(runner *runner.Runner) Runner {
+	return &runnerShim{Runner: runner}
+}
+
+func (r *runnerShim) Store(ctx context.Context, schemaName string) (Store, error) {
+	return r.Runner.Store(ctx, schemaName)
+}

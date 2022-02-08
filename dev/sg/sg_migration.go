@@ -14,7 +14,6 @@ import (
 	"github.com/sourcegraph/sourcegraph/dev/sg/internal/stdout"
 	connections "github.com/sourcegraph/sourcegraph/internal/database/connections/live"
 	"github.com/sourcegraph/sourcegraph/internal/database/migration/cliutil"
-	"github.com/sourcegraph/sourcegraph/internal/database/migration/runner"
 	"github.com/sourcegraph/sourcegraph/internal/database/migration/store"
 	"github.com/sourcegraph/sourcegraph/internal/database/postgresdsn"
 	"github.com/sourcegraph/sourcegraph/internal/observation"
@@ -89,15 +88,7 @@ func makeRunner(ctx context.Context, schemaNames []string) (cliutil.Runner, erro
 		return connections.NewStoreShim(store.NewWithDB(db, migrationsTable, store.NewOperations(&observation.TestContext)))
 	}
 
-	return &runnerShim{connections.RunnerFromDSNs(postgresdsn.RawDSNsBySchema(schemaNames), "sg", storeFactory)}, nil
-}
-
-type runnerShim struct {
-	*runner.Runner
-}
-
-func (r *runnerShim) Store(ctx context.Context, schemaName string) (cliutil.Store, error) {
-	return r.Runner.Store(ctx, schemaName)
+	return cliutil.NewShim(connections.RunnerFromDSNs(postgresdsn.RawDSNsBySchema(schemaNames), "sg", storeFactory)), nil
 }
 
 func migrationAddExec(ctx context.Context, args []string) error {

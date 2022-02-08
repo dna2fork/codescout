@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"strconv"
 
 	"github.com/peterbourgon/ff/v3/ffcli"
 
@@ -34,6 +35,11 @@ func AddLog(commandName string, factory RunnerFactory, out *output.Output) *ffcl
 			out.WriteLine(output.Linef("", output.StyleWarning, "ERROR: supply a migration version via -version"))
 			return flag.ErrHelp
 		}
+		version, err := strconv.Atoi(*versionFlag)
+		if err != nil {
+			out.WriteLine(output.Linef("", output.StyleWarning, "ERROR: invalid migration version %q", *versionFlag))
+			return flag.ErrHelp
+		}
 
 		r, err := factory(ctx, []string{*schemaNameFlag})
 		if err != nil {
@@ -44,9 +50,7 @@ func AddLog(commandName string, factory RunnerFactory, out *output.Output) *ffcl
 			return err
 		}
 
-		// TODO
-		definition := definition.Definition{}
-		return store.WithMigrationLog(ctx, definition, *upFlag, noop)
+		return store.WithMigrationLog(ctx, definition.Definition{ID: version}, *upFlag, noop)
 	}
 
 	return &ffcli.Command{
